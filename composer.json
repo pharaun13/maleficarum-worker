@@ -1,0 +1,53 @@
+{
+    "name": "maleficarum/worker",
+    "description": "Worker component",
+    "require": {
+        "php": ">=5.6",
+        "ext-json": "*",
+        "maleficarum/ioc": "^1.0",
+        "maleficarum/environment": "^1.0",
+        "maleficarum/config": "^1.0",
+        "maleficarum/profiler": "^1.0",
+        "maleficarum/handler": "^1.0",
+        "maleficarum/rabbitmq": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Maleficarum\\Worker\\": "src/Worker/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Maleficarum\\Worker\\Test\\": "test/"
+        }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:pharaun13/maleficarum-ioc.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:pharaun13/maleficarum-environment.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:pharaun13/maleficarum-config.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:pharaun13/maleficarum-profiler.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:pharaun13/maleficarum-handler.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:pharaun13/maleficarum-rabbitmq.git"
+        }
+    ]
+}
