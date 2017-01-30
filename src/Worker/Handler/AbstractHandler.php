@@ -47,7 +47,7 @@ abstract class AbstractHandler
     /**
      * Internal storage for a command object.
      *
-     * @var \Maleficarum\Worker\Command\AbstractCommand
+     * @var \Maleficarum\Command\AbstractCommand
      */
     private $command = null;
 
@@ -97,7 +97,7 @@ abstract class AbstractHandler
      * @return string
      */
     public function getHandlerId() : string {
-        if ($this->getCommand() instanceof \Maleficarum\Worker\Command\AbstractCommand) {
+        if ($this->getCommand() instanceof \Maleficarum\Command\AbstractCommand) {
             $parent = $this->getCommand()->getParentHandlerId();
         } else {
             $parent = null;
@@ -137,11 +137,11 @@ abstract class AbstractHandler
     /**
      * Set current command.
      *
-     * @param \Maleficarum\Worker\Command\AbstractCommand $command
+     * @param \Maleficarum\Command\AbstractCommand $command
      *
      * @return \Maleficarum\Worker\Handler\AbstractHandler
      */
-    public function setCommand(\Maleficarum\Worker\Command\AbstractCommand $command) : \Maleficarum\Worker\Handler\AbstractHandler {
+    public function setCommand(\Maleficarum\Command\AbstractCommand $command) : \Maleficarum\Worker\Handler\AbstractHandler {
         $this->command = $command;
 
         return $this;
@@ -150,11 +150,11 @@ abstract class AbstractHandler
     /**
      * Add a new command to the queue (this will automatically attach parent handler id)
      *
-     * @param \Maleficarum\Worker\Command\AbstractCommand $cmd
+     * @param \Maleficarum\Command\AbstractCommand $cmd
      *
      * @return \Maleficarum\Worker\Handler\AbstractHandler
      */
-    public function addCommand(\Maleficarum\Worker\Command\AbstractCommand $cmd) : \Maleficarum\Worker\Handler\AbstractHandler {
+    public function addCommand(\Maleficarum\Command\AbstractCommand $cmd) : \Maleficarum\Worker\Handler\AbstractHandler {
         $this
             ->getQueue()
             ->addCommand($cmd->setParentHandlerId($this->getHandlerId()));
@@ -165,7 +165,7 @@ abstract class AbstractHandler
     /**
      * Add collection of commands to the queue
      *
-     * @param array|\Maleficarum\Worker\Command\AbstractCommand[] $commands
+     * @param array|\Maleficarum\Command\AbstractCommand[] $commands
      *
      * @return \Maleficarum\Worker\Handler\AbstractHandler
      */
@@ -184,7 +184,7 @@ abstract class AbstractHandler
     /**
      * Fetch current command.
      *
-     * @return \Maleficarum\Worker\Command\AbstractCommand
+     * @return \Maleficarum\Command\AbstractCommand
      */
     public function getCommand() {
         return $this->command;

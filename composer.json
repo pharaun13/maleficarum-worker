@@ -9,10 +9,11 @@
         "maleficarum/config": "^2.0",
         "maleficarum/profiler": "^2.0",
         "maleficarum/handler": "^2.0",
-        "maleficarum/rabbitmq": "^2.0"
+        "maleficarum/rabbitmq": "^2.0",
+        "maleficarum/command": "^1.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^5.5"
+        "phpunit/phpunit": "^5.7"
     },
     "autoload": {
         "psr-4": {
@@ -48,6 +49,14 @@
         {
             "type": "vcs",
             "url": "git@github.com:pharaun13/maleficarum-rabbitmq.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:pharaun13/maleficarum-response.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:pharaun13/maleficarum-command.git"
         }
     ]
 }

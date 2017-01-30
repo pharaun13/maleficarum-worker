@@ -102,7 +102,7 @@ class Master
      */
     public function handleCommand(\PhpAmqpLib\Message\AMQPMessage $message) {
         try {
-            $command = \Maleficarum\Worker\Command\AbstractCommand::decode($message->body);
+            $command = \Maleficarum\Command\AbstractCommand::decode($message->body);
         } catch (\Exception $e) {
             $this->getLogger()->log('[' . $this->name . '] Received command of unknown structure (NOT JSON).', 'PHP Worker Error');
             $message->delivery_info['channel']->basic_nack($message->delivery_info['delivery_tag']);
@@ -111,7 +111,7 @@ class Master
         }
 
         // received message is a command of unsupported type
-        if (!$command instanceof \Maleficarum\Worker\Command\AbstractCommand) {
+        if (!$command instanceof \Maleficarum\Command\AbstractCommand) {
             $this->getLogger()->log('[' . $this->name . '] Received command of unknown type.', 'PHP Worker Error');
             $message->delivery_info['channel']->basic_nack($message->delivery_info['delivery_tag']);
 
