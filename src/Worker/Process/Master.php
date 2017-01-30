@@ -57,7 +57,7 @@ class Master
      *
      * @return \Maleficarum\Worker\Process\Master
      */
-    public function init($name, $channel) {
+    public function init(string $name, string $channel) : \Maleficarum\Worker\Process\Master {
         $this->getQueue()->init();
         $this->name = $name;
         $this->channel = $channel;
@@ -70,7 +70,7 @@ class Master
      *
      * @return \Maleficarum\Worker\Process\Master
      */
-    public function execute() {
+    public function execute() : \Maleficarum\Worker\Process\Master {
         $channel = $this->getQueue()->getChannel($this->channel);
         $channel->basic_qos(null, 1, null);
         $channel->basic_consume($this->getConfig()['queue']['commands']['queue-name'], '', false, false, false, false, [$this, 'handleCommand']);
@@ -87,7 +87,7 @@ class Master
      *
      * @return \Maleficarum\Worker\Process\Master
      */
-    public function conclude() {
+    public function conclude() : \Maleficarum\Worker\Process\Master {
         $this->getQueue()->close();
 
         return $this;
@@ -96,46 +96,46 @@ class Master
     /**
      * Handle an incoming command.
      *
-     * @param \PhpAmqpLib\Message\AMQPMessage $msg
+     * @param \PhpAmqpLib\Message\AMQPMessage $message
      *
-     * @return \Maleficarum\Worker\Process\Master
+     * @return \Maleficarum\Worker\Process\Master|bool
      */
-    public function handleCommand(\PhpAmqpLib\Message\AMQPMessage $msg) {
+    public function handleCommand(\PhpAmqpLib\Message\AMQPMessage $message) {
         try {
-            $cmd = \Maleficarum\Worker\Command\AbstractCommand::decode($msg->body);
+            $command = \Maleficarum\Worker\Command\AbstractCommand::decode($message->body);
         } catch (\Exception $e) {
             $this->getLogger()->log('[' . $this->name . '] Received command of unknown structure (NOT JSON).', 'PHP Worker Error');
-            $msg->delivery_info['channel']->basic_nack($msg->delivery_info['delivery_tag']);
+            $message->delivery_info['channel']->basic_nack($message->delivery_info['delivery_tag']);
 
             return false;
         }
 
         // received message is a command of unsupported type
-        if (!$cmd instanceof \Maleficarum\Worker\Command\AbstractCommand) {
+        if (!$command instanceof \Maleficarum\Worker\Command\AbstractCommand) {
             $this->getLogger()->log('[' . $this->name . '] Received command of unknown type.', 'PHP Worker Error');
-            $msg->delivery_info['channel']->basic_nack($msg->delivery_info['delivery_tag']);
+            $message->delivery_info['channel']->basic_nack($message->delivery_info['delivery_tag']);
 
             return false;
         }
 
         $this->getProfiler('time')->clear()->begin();
-        $handler = \Maleficarum\Ioc\Container::get('Handler\\' . $cmd->getType());
         /* @var \Maleficarum\Worker\Handler\AbstractHandler $handler */
+        $handler = \Maleficarum\Ioc\Container::get('Handler\\' . $command->getType());
         $handler
             ->setWorkerId($this->name)
-            ->setChId(uniqid('HID-'))
-            ->setCommand($cmd);
+            ->setHandlerId(uniqid('HID-'))
+            ->setCommand($command);
 
-        $this->getLogger()->log('[' . $this->name . '] [' . $handler->getChId() . '] Received command. Type: ' . $cmd->getType() . ' Data: ' . $cmd, 'PHP Worker Info');
+        $this->getLogger()->log('[' . $this->name . '] [' . $handler->getHandlerId() . '] Received command. Type: ' . $command->getType() . ' Data: ' . $command, 'PHP Worker Info');
 
         if ($handler->handle()) {
             $exec = round($this->getProfiler('time')->end()->getProfile(), 4);
-            $msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
-            $this->getLogger()->log('[' . $this->name . '] [' . $handler->getChId() . '] Command handler COMPLETE. Type: ' . $cmd->getType() . ' [Exec time: ' . $exec . 's]', 'PHP Worker Info');
+            $message->delivery_info['channel']->basic_ack($message->delivery_info['delivery_tag']);
+            $this->getLogger()->log('[' . $this->name . '] [' . $handler->getHandlerId() . '] Command handler COMPLETE. Type: ' . $command->getType() . ' [Exec time: ' . $exec . 's]', 'PHP Worker Info');
         } else {
             $exec = round($this->getProfiler('time')->end()->getProfile(), 4);
-            $msg->delivery_info['channel']->basic_nack($msg->delivery_info['delivery_tag'], false, true);
-            $this->getLogger()->log('[' . $this->name . '] [' . $handler->getChId() . '] Command handler FAILED - command requeued. Type: ' . $cmd->getType() . ' [Exec time: ' . $exec . 's]', 'PHP Worker Info');
+            $message->delivery_info['channel']->basic_nack($message->delivery_info['delivery_tag'], false, true);
+            $this->getLogger()->log('[' . $this->name . '] [' . $handler->getHandlerId() . '] Command handler FAILED - command requeued. Type: ' . $command->getType() . ' [Exec time: ' . $exec . 's]', 'PHP Worker Info');
         }
 
         return $this;

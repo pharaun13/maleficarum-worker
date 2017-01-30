@@ -35,7 +35,7 @@ abstract class AbstractHandler
      *
      * @var string
      */
-    private $chId = '__';
+    private $handlerId = '__';
 
     /**
      * Internal storage for worker id.
@@ -51,45 +51,65 @@ abstract class AbstractHandler
      */
     private $command = null;
 
+    /* ------------------------------------ AbstractHandler methods START ------------------------------ */
+    /**
+     * Send specified message to the log.
+     *
+     * @param string $message
+     *
+     * @return \Maleficarum\Worker\Handler\AbstractHandler
+     */
+    protected function log(string $message) : \Maleficarum\Worker\Handler\AbstractHandler {
+        $this
+            ->getLogger()
+            ->log('[' . $this->getWorkerId() . '] ' . '[' . $this->getHandlerId() . '] ' . $message, 'PHP Worker Info');
+
+        return $this;
+    }
+    /* ------------------------------------ AbstractHandler methods END -------------------------------- */
+
+    /* ------------------------------------ Abstract methods START ------------------------------------- */
     /**
      * Handle the incoming command. Return true on success, false otherwise. If false is returned the command is not considered handled so it will not be acknowledged.
      *
      * @return bool
      */
-    abstract public function handle();
+    abstract public function handle() : bool;
+    /* ------------------------------------ Abstract methods END --------------------------------------- */
 
+    /* ------------------------------------ Setters & Getters START ------------------------------------ */
     /**
-     * Add a new command to the queue (this will automatically attach parent handler id)
+     * Set current command handler id string.
      *
-     * @param \Maleficarum\Worker\Command\AbstractCommand $cmd
+     * @param string $handlerId
      *
      * @return \Maleficarum\Worker\Handler\AbstractHandler
      */
-    public function addCommand(\Maleficarum\Worker\Command\AbstractCommand $cmd) {
-        $this
-            ->getQueue()
-            ->addCommand($cmd->setParentHandlerId($this->getChId()));
+    public function setHandlerId(string $handlerId) : \Maleficarum\Worker\Handler\AbstractHandler {
+        $this->handlerId = $handlerId;
 
         return $this;
     }
 
     /**
-     * Add collection of commands to the queue
-     * 
-     * @param array|\Maleficarum\Worker\Command\AbstractCommand[] $cmds
+     * Return current command handler id string.
      *
-     * @return \Maleficarum\Worker\Handler\AbstractHandler
+     * @return string
      */
-    public function addCommands(array $cmds) {
-        foreach ($cmds as $cmd) {
-            $cmd->setParentHandlerId($this->getChId());
+    public function getHandlerId() : string {
+        if ($this->getCommand() instanceof \Maleficarum\Worker\Command\AbstractCommand) {
+            $parent = $this->getCommand()->getParentHandlerId();
+        } else {
+            $parent = null;
         }
 
-        $this
-            ->getQueue()
-            ->addCommands($cmds);
+        if (!empty($parent)) {
+            $return[] = $parent;
+        }
 
-        return $this;
+        $return[] = $this->handlerId;
+
+        return implode('/', $return);
     }
 
     /**
@@ -99,7 +119,7 @@ abstract class AbstractHandler
      *
      * @return \Maleficarum\Worker\Handler\AbstractHandler
      */
-    public function setWorkerId($workerId) {
+    public function setWorkerId(string $workerId) : \Maleficarum\Worker\Handler\AbstractHandler {
         $this->workerId = $workerId;
 
         return $this;
@@ -115,63 +135,48 @@ abstract class AbstractHandler
     }
 
     /**
-     * Send specified message to the log.
-     *
-     * @param string $message
-     *
-     * @return \Maleficarum\Worker\Handler\AbstractHandler
-     */
-    protected function log($message) {
-        $this
-            ->getLogger()
-            ->log('[' . $this->getWorkerId() . '] ' . '[' . $this->getChId() . '] ' . $message, 'PHP Worker Info');
-
-        return $this;
-    }
-
-    /**
-     * Set current command handler id string.
-     *
-     * @param string $chId
-     *
-     * @return \Maleficarum\Worker\Handler\AbstractHandler
-     */
-    public function setChId($chId) {
-        $this->chId = $chId;
-
-        return $this;
-    }
-
-    /**
-     * Return current command handler id string.
-     *
-     * @return string
-     */
-    public function getChId() {
-        if ($this->getCommand() instanceof \Maleficarum\Worker\Command\AbstractCommand) {
-            $parent = $this->getCommand()->getParentHandlerId();
-        } else {
-            $parent = null;
-        }
-
-        if (!empty($parent)) {
-            $return[] = $parent;
-        }
-
-        $return[] = $this->chId;
-
-        return implode('/', $return);
-    }
-
-    /**
      * Set current command.
+     *
+     * @param \Maleficarum\Worker\Command\AbstractCommand $command
+     *
+     * @return \Maleficarum\Worker\Handler\AbstractHandler
+     */
+    public function setCommand(\Maleficarum\Worker\Command\AbstractCommand $command) : \Maleficarum\Worker\Handler\AbstractHandler {
+        $this->command = $command;
+
+        return $this;
+    }
+
+    /**
+     * Add a new command to the queue (this will automatically attach parent handler id)
      *
      * @param \Maleficarum\Worker\Command\AbstractCommand $cmd
      *
      * @return \Maleficarum\Worker\Handler\AbstractHandler
      */
-    public function setCommand(\Maleficarum\Worker\Command\AbstractCommand $cmd) {
-        $this->command = $cmd;
+    public function addCommand(\Maleficarum\Worker\Command\AbstractCommand $cmd) : \Maleficarum\Worker\Handler\AbstractHandler {
+        $this
+            ->getQueue()
+            ->addCommand($cmd->setParentHandlerId($this->getHandlerId()));
+
+        return $this;
+    }
+
+    /**
+     * Add collection of commands to the queue
+     *
+     * @param array|\Maleficarum\Worker\Command\AbstractCommand[] $commands
+     *
+     * @return \Maleficarum\Worker\Handler\AbstractHandler
+     */
+    public function addCommands(array $commands) : \Maleficarum\Worker\Handler\AbstractHandler {
+        foreach ($commands as $command) {
+            $command->setParentHandlerId($this->getHandlerId());
+        }
+
+        $this
+            ->getQueue()
+            ->addCommands($commands);
 
         return $this;
     }
@@ -184,4 +189,5 @@ abstract class AbstractHandler
     public function getCommand() {
         return $this->command;
     }
+    /* ------------------------------------ Setters & Getters END -------------------------------------- */
 }

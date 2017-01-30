@@ -10,11 +10,10 @@ interface Facility
     /**
      * Write the specified data to the logging facility.
      *
-     * @param Mixed $data
-     * @param Integer $level
+     * @param mixed $data
+     * @param string $level
      *
-     * @throws \InvalidArgumentException
      * @return \Maleficarum\Worker\Logger\Facility\Facility
      */
-    public function write($data, $level);
+    public function write($data, string $level) : \Maleficarum\Worker\Logger\Facility\Facility;
 }

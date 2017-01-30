@@ -20,7 +20,7 @@ class Bootstrap
      *
      * @return \Maleficarum\Worker\Bootstrap
      */
-    final public function setUpErrorHandling() {
+    final public function setUpErrorHandling() : \Maleficarum\Worker\Bootstrap {
         \set_exception_handler([\Maleficarum\Ioc\Container::get('Maleficarum\Handler\ExceptionHandler'), 'handle']);
         \set_error_handler([\Maleficarum\Ioc\Container::get('Maleficarum\Handler\ErrorHandler'), 'handle']);
 
@@ -30,11 +30,11 @@ class Bootstrap
     /**
      * Bootstrap step method - set up profiler objects.
      *
-     * @param int|null $start
+     * @param float|null $start
      *
      * @return \Maleficarum\Worker\Bootstrap
      */
-    final public function setUpProfilers($start = null) {
+    final public function setUpProfilers(float $start = null) : \Maleficarum\Worker\Bootstrap {
         $this->timeProfiler = \Maleficarum\Ioc\Container::get('Maleficarum\Profiler\Time');
         $this->timeProfiler->begin($start);
         \Maleficarum\Ioc\Container::registerDependency('Maleficarum\Profiler\Time', $this->timeProfiler);
@@ -47,26 +47,26 @@ class Bootstrap
     /**
      * Bootstrap step method - detect application environment.
      *
-     * @throws \RuntimeException
      * @return \Maleficarum\Worker\Bootstrap
+     * @throws \RuntimeException
      */
-    final public function setUpEnvironment() {
-        /* @var \Maleficarum\Environment\Server $env */
-        $env = \Maleficarum\Ioc\Container::get('Maleficarum\Environment\Server');
-        \Maleficarum\Ioc\Container::registerDependency('Maleficarum\Environment', $env);
+    final public function setUpEnvironment() : \Maleficarum\Worker\Bootstrap {
+        /* @var \Maleficarum\Environment\Server $environment */
+        $environment = \Maleficarum\Ioc\Container::get('Maleficarum\Environment\Server');
+        \Maleficarum\Ioc\Container::registerDependency('Maleficarum\Environment', $environment);
 
         // fetch current env
-        $env = $env->getCurrentEnvironment();
+        $environment = $environment->getCurrentEnvironment();
 
         // set handler debug level based on env
-        if (in_array($env, ['local', 'development', 'staging'])) {
+        if (in_array($environment, ['local', 'development', 'staging'])) {
             \Maleficarum\Handler\AbstractHandler::setDebugLevel(\Maleficarum\Handler\AbstractHandler::DEBUG_LEVEL_FULL);
-        } elseif ($env === 'uat') {
+        } elseif ($environment === 'uat') {
             \Maleficarum\Handler\AbstractHandler::setDebugLevel(\Maleficarum\Handler\AbstractHandler::DEBUG_LEVEL_LIMITED);
-        } elseif ($env === 'production') {
+        } elseif ($environment === 'production') {
             \Maleficarum\Handler\AbstractHandler::setDebugLevel(\Maleficarum\Handler\AbstractHandler::DEBUG_LEVEL_CRUCIAL);
         } else {
-            throw new \RuntimeException('Unrecognised environment. \Maleficarum\Worker\Bootstrap::setUpEnvironment()');
+            throw new \RuntimeException(sprintf('Unrecognised environment. \%s::setUpEnvironment()', static::class));
         }
 
         // since this is a worker app we can turn on all error reporting regardless of environment
@@ -81,10 +81,9 @@ class Bootstrap
     /**
      * Bootstrap step method - prepare, load and register the config object.
      *
-     * @throws \RuntimeException
      * @return \Maleficarum\Worker\Bootstrap
      */
-    final public function setUpConfig() {
+    final public function setUpConfig() : \Maleficarum\Worker\Bootstrap {
         /* @var \Maleficarum\Config\Ini\Config $config */
         $config = \Maleficarum\Ioc\Container::get('Maleficarum\Config\Ini\Config', ['id' => 'config.ini']);
         \Maleficarum\Ioc\Container::registerDependency('Maleficarum\Config', $config);
@@ -99,7 +98,7 @@ class Bootstrap
      *
      * @return \Maleficarum\Worker\Bootstrap
      */
-    final public function setUpLogger() {
+    final public function setUpLogger() : \Maleficarum\Worker\Bootstrap {
         $logger = \Maleficarum\Ioc\Container::get('Maleficarum\Worker\Logger\Logger');
         \Maleficarum\Ioc\Container::registerDependency('Maleficarum\Logger', $logger);
 
@@ -113,9 +112,9 @@ class Bootstrap
      *
      * @return \Maleficarum\Worker\Bootstrap
      */
-    final public function setUpQueue() {
-        $rab = \Maleficarum\Ioc\Container::get('Maleficarum\Rabbitmq\Connection');
-        \Maleficarum\Ioc\Container::registerDependency('Maleficarum\CommandQueue', $rab);
+    final public function setUpQueue() : \Maleficarum\Worker\Bootstrap {
+        $rabbitmq = \Maleficarum\Ioc\Container::get('Maleficarum\Rabbitmq\Connection');
+        \Maleficarum\Ioc\Container::registerDependency('Maleficarum\CommandQueue', $rabbitmq);
 
         !is_null($this->timeProfiler) && $this->timeProfiler->addMilestone('queue_init', 'RabbitMQ broker connection initialized.');
 
@@ -125,11 +124,11 @@ class Bootstrap
     /**
      * Perform full worker init.
      *
-     * @param int $start
+     * @param float $start
      *
      * @return \Maleficarum\Worker\Bootstrap
      */
-    final public function init($start = 0) {
+    final public function init(float $start = 0) : \Maleficarum\Worker\Bootstrap {
         return $this
             ->setUpErrorHandling()
             ->setUpProfilers($start)
@@ -142,9 +141,11 @@ class Bootstrap
     /**
      * Perform any final maintenance actions. This will be called at the end of the worker run.
      *
+     * @param string $name
+     *
      * @return \Maleficarum\Worker\Bootstrap
      */
-    public function conclude($name = '[anonymous-worker]') {
+    public function conclude(string $name = '[anonymous-worker]') : \Maleficarum\Worker\Bootstrap {
         echo $name . ' Worker operations concluded!!!' . PHP_EOL;
 
         return $this;

@@ -17,11 +17,18 @@ class Syslog implements Facility
     const FACILITY_EOL = \PHP_EOL;
 
     /**
+     * Write the specified data to the logging facility.
+     *
      * @see \Maleficarum\Worker\Logger\Facility\Facility::write()
+     *
+     * @param string $data
+     * @param string $level
+     *
+     * @return \Maleficarum\Worker\Logger\Facility\Facility
      */
-    public function write($data, $level) {
+    public function write($data, string $level) : \Maleficarum\Worker\Logger\Facility\Facility {
         if (!is_string($level)) {
-            throw new \InvalidArgumentException('Incorrect debug level provided - string expected. \Maleficarum\Worker\Logger\Facility\Syslog');
+            throw new \InvalidArgumentException(sprintf('Incorrect debug level provided - string expected. \%s::write()'));
         }
 
         if (is_object($data) || is_array($data)) {
