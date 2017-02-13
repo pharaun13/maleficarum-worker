@@ -1,6 +1,11 @@
 # Change Log
 This is the Maleficarum Worker component implementation. 
 
+
+## [3.0.1] - 2017-02-13
+### Fixed
+- Change abstract command class namespace
+
 ## [3.0.0] - 2017-01-30
 ### Changed
 - Moved command component to external repository
