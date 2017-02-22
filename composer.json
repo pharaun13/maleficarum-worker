@@ -1,6 +1,7 @@
 {
     "name": "maleficarum/worker",
     "description": "Worker component",
+    "license": "proprietary",
     "require": {
         "php": ">=7.0",
         "ext-json": "*",
@@ -8,12 +9,12 @@
         "maleficarum/environment": "^2.0",
         "maleficarum/config": "^2.0",
         "maleficarum/profiler": "^2.0",
-        "maleficarum/handler": "^2.0",
+        "maleficarum/handler": "^3.0",
         "maleficarum/rabbitmq": "^3.0",
         "maleficarum/command": "^1.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^5.7"
+        "phpunit/phpunit": "^6.0"
     },
     "autoload": {
         "psr-4": {
@@ -21,9 +22,9 @@
         }
     },
     "autoload-dev": {
-        "psr-4": {
-            "Maleficarum\\Worker\\Test\\": "test/"
-        }
+        "files": [
+            "test/TestCase.php"
+        ]
     },
     "repositories": [
         {
@@ -48,11 +49,11 @@
         },
         {
             "type": "vcs",
-            "url": "git@github.com:pharaun13/maleficarum-rabbitmq.git"
+            "url": "git@github.com:pharaun13/maleficarum-response.git"
         },
         {
             "type": "vcs",
-            "url": "git@github.com:pharaun13/maleficarum-response.git"
+            "url": "git@github.com:pharaun13/maleficarum-rabbitmq.git"
         },
         {
             "type": "vcs",

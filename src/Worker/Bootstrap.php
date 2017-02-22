@@ -21,7 +21,7 @@ class Bootstrap
      * @return \Maleficarum\Worker\Bootstrap
      */
     final public function setUpErrorHandling() : \Maleficarum\Worker\Bootstrap {
-        \set_exception_handler([\Maleficarum\Ioc\Container::get('Maleficarum\Handler\ExceptionHandler'), 'handle']);
+        \set_exception_handler([\Maleficarum\Ioc\Container::get('Maleficarum\Handler\CommandLine\ExceptionHandler'), 'handle']);
         \set_error_handler([\Maleficarum\Ioc\Container::get('Maleficarum\Handler\ErrorHandler'), 'handle']);
 
         return $this;
@@ -128,7 +128,7 @@ class Bootstrap
      *
      * @return \Maleficarum\Worker\Bootstrap
      */
-    final public function init(float $start = 0) : \Maleficarum\Worker\Bootstrap {
+    final public function init(float $start = 0.0) : \Maleficarum\Worker\Bootstrap {
         return $this
             ->setUpErrorHandling()
             ->setUpProfilers($start)

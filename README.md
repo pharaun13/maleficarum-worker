@@ -1,6 +1,11 @@
 # Change Log
 This is the Maleficarum Worker component implementation. 
 
+## [3.0.2] - 2017-02-22
+### Changed
+- Bump handler component version
+- Make use of new command line handler
+- Add tests
 
 ## [3.0.1] - 2017-02-13
 ### Fixed
