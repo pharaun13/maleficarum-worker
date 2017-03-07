@@ -1,6 +1,10 @@
 # Change Log
 This is the Maleficarum Worker component implementation. 
 
+## [4.0.0] - 2017-03-07
+### Changed
+- Bump rabbitmq component version
+
 ## [3.0.2] - 2017-02-22
 ### Changed
 - Bump handler component version
