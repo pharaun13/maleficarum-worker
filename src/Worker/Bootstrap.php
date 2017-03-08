@@ -14,6 +14,13 @@ class Bootstrap
      */
     public $timeProfiler = null;
 
+    /**
+     * Internal storage for config
+     *
+     * @var \Maleficarum\Config\AbstractConfig
+     */
+    private $config;
+
     /* ------------------------------------ Bootstrap methods START ------------------------------------ */
     /**
      * Bootstrap step method - set up error/exception handling.
@@ -88,6 +95,8 @@ class Bootstrap
         $config = \Maleficarum\Ioc\Container::get('Maleficarum\Config\Ini\Config', ['id' => 'config.ini']);
         \Maleficarum\Ioc\Container::registerDependency('Maleficarum\Config', $config);
 
+        $this->config = $config;
+
         !is_null($this->timeProfiler) && $this->timeProfiler->addMilestone('conf_init', 'Config initialized.');
 
         return $this;
@@ -113,7 +122,13 @@ class Bootstrap
      * @return \Maleficarum\Worker\Bootstrap
      */
     final public function setUpQueue() : \Maleficarum\Worker\Bootstrap {
-        $rabbitmq = \Maleficarum\Ioc\Container::get('Maleficarum\Rabbitmq\Connection');
+        $host = $this->config['queue']['broker']['host'];
+        $port = $this->config['queue']['broker']['port'];
+        $username = $this->config['queue']['broker']['username'];
+        $password = $this->config['queue']['broker']['password'];
+        $queueName = $this->config['queue']['commands']['queue-name'];
+
+        $rabbitmq = \Maleficarum\Ioc\Container::get('Maleficarum\Rabbitmq\Connection', [$queueName, $host, $port, $username, $password]);
         \Maleficarum\Ioc\Container::registerDependency('Maleficarum\CommandQueue', $rabbitmq);
 
         !is_null($this->timeProfiler) && $this->timeProfiler->addMilestone('queue_init', 'RabbitMQ broker connection initialized.');
