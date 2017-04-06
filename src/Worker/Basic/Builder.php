@@ -109,6 +109,9 @@ class Builder {
             return $logger;
         });
 
+        $logger = \Maleficarum\Ioc\Container::get('Maleficarum\Worker\Logger\Logger');
+        \Maleficarum\Ioc\Container::registerDependency('Maleficarum\Logger', $logger);
+
         return $this;
     }
 
