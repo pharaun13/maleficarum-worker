@@ -6,11 +6,11 @@
         "php": ">=7.0",
         "ext-json": "*",
         "maleficarum/ioc": "^2.0",
-        "maleficarum/environment": "^2.0",
-        "maleficarum/config": "^2.0",
-        "maleficarum/profiler": "^2.0",
+        "maleficarum/environment": "^3.0",
+        "maleficarum/config": "^3.0",
+        "maleficarum/profiler": "^3.0",
         "maleficarum/handler": "^3.0",
-        "maleficarum/rabbitmq": "^5.0",
+        "maleficarum/rabbitmq": "^6.0",
         "maleficarum/command": "^1.0"
     },
     "require-dev": {

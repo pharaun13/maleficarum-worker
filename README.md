@@ -1,6 +1,14 @@
 # Change Log
 This is the Maleficarum Worker component implementation. 
 
+## [5.0.0] - 2017-04-06
+### Changed
+- Bump components version
+- Moved default initializers for external components into those components - they are no longer defined within this project.
+- Added internal builder definitions and a mechanism to skip their loading in specific initializers.
+- Decoupled bootstrap initialization functionalities from the main bootstrap object. As of know when using the bootstrap object one can and must provide a list of valid PHP callable types that will be run in order when the initialization process is executed.
+- Default bootstrap initializers were separed from the main class as static methods to be used as needed on a case-by-case basis.
+
 ## [4.0.1] - 2017-03-08
 ### Changed
 - Bump rabbitmq component version
