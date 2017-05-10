@@ -1,6 +1,10 @@
 # Change Log
 This is the Maleficarum Worker component implementation. 
 
+## [5.1.0] - 2017-05-10
+### Added
+- Pass config to handler object
+
 ## [5.0.0] - 2017-04-06
 ### Changed
 - Bump components version
