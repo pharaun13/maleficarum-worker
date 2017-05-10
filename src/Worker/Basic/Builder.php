@@ -78,6 +78,7 @@ class Builder {
                 ->addProfiler($dep['Maleficarum\Profiler\Time'], 'time');
 
             (method_exists($handler, 'setRedis') && isset($dep['Maleficarum\Redis'])) and $handler->setRedis($dep['Maleficarum\Redis']);
+            (method_exists($handler, 'setConfig') && isset($dep['Maleficarum\Config'])) and $handler->setConfig($dep['Maleficarum\Config']);
 
             return $handler;
         });
