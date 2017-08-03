@@ -2,12 +2,11 @@
 /**
  * This class contains default initializers used as Maleficarum bootstrap methods.
  */
-declare (strict_types = 1);
+declare (strict_types=1);
 
 namespace Maleficarum\Worker\Basic;
 
 class Initializer {
-
     /* ------------------------------------ Class Methods START ---------------------------------------- */
 
     /**
@@ -15,7 +14,7 @@ class Initializer {
      *
      * @return string
      */
-    static public function setUpErrorHandling() : string {
+    static public function setUpErrorHandling(): string {
         \set_exception_handler([\Maleficarum\Ioc\Container::get('Maleficarum\Handler\CommandLine\ExceptionHandler'), 'handle']);
         \set_error_handler([\Maleficarum\Ioc\Container::get('Maleficarum\Handler\ErrorHandler'), 'handle']);
 
@@ -31,7 +30,7 @@ class Initializer {
      * @throws \RuntimeException
      * @return string
      */
-    static public function setUpDebugLevel(array $opts = []) : string {
+    static public function setUpDebugLevel(array $opts = []): string {
         try {
             $environment = \Maleficarum\Ioc\Container::getDependency('Maleficarum\Environment');
             $environment = $environment->getCurrentEnvironment();
@@ -65,7 +64,7 @@ class Initializer {
      *
      * @return string
      */
-    static public function setUpHandler(array $opts = []) : string {
+    static public function setUpHandler(array $opts = []): string {
         // load default builder if skip not requested
         $builders = $opts['builders'] ?? [];
         is_array($builders) or $builders = [];
@@ -82,7 +81,7 @@ class Initializer {
      *
      * @return string
      */
-    static public function setUpProcess(array $opts = []) : string {
+    static public function setUpProcess(array $opts = []): string {
         // load default builder if skip not requested
         $builders = $opts['builders'] ?? [];
         is_array($builders) or $builders = [];
@@ -99,7 +98,7 @@ class Initializer {
      *
      * @return string
      */
-    static public function setUpLogger(array $opts = []) : string {
+    static public function setUpLogger(array $opts = []): string {
         // load default builder if skip not requested
         $builders = $opts['builders'] ?? [];
         is_array($builders) or $builders = [];
@@ -108,5 +107,6 @@ class Initializer {
         // return initializer name
         return __METHOD__;
     }
+
     /* ------------------------------------ Class Methods END ------------------------------------------ */
 }

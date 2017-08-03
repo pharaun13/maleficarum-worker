@@ -7,8 +7,7 @@
 
 namespace Maleficarum\Worker\Handler;
 
-abstract class AbstractHandler
-{
+abstract class AbstractHandler {
     /**
      * Use \Maleficarum\Worker\Logger\Dependant functionality.
      *
@@ -59,7 +58,7 @@ abstract class AbstractHandler
      *
      * @return \Maleficarum\Worker\Handler\AbstractHandler
      */
-    protected function log(string $message) : \Maleficarum\Worker\Handler\AbstractHandler {
+    protected function log(string $message): \Maleficarum\Worker\Handler\AbstractHandler {
         $this
             ->getLogger()
             ->log('[' . $this->getWorkerId() . '] ' . '[' . $this->getHandlerId() . '] ' . $message, 'PHP Worker Info');
@@ -74,7 +73,7 @@ abstract class AbstractHandler
      *
      * @return bool
      */
-    abstract public function handle() : bool;
+    abstract public function handle(): bool;
     /* ------------------------------------ Abstract methods END --------------------------------------- */
 
     /* ------------------------------------ Setters & Getters START ------------------------------------ */
@@ -85,7 +84,7 @@ abstract class AbstractHandler
      *
      * @return \Maleficarum\Worker\Handler\AbstractHandler
      */
-    public function setHandlerId(string $handlerId) : \Maleficarum\Worker\Handler\AbstractHandler {
+    public function setHandlerId(string $handlerId): \Maleficarum\Worker\Handler\AbstractHandler {
         $this->handlerId = $handlerId;
 
         return $this;
@@ -96,7 +95,7 @@ abstract class AbstractHandler
      *
      * @return string
      */
-    public function getHandlerId() : string {
+    public function getHandlerId(): string {
         if ($this->getCommand() instanceof \Maleficarum\Command\AbstractCommand) {
             $parent = $this->getCommand()->getParentHandlerId();
         } else {
@@ -119,7 +118,7 @@ abstract class AbstractHandler
      *
      * @return \Maleficarum\Worker\Handler\AbstractHandler
      */
-    public function setWorkerId(string $workerId) : \Maleficarum\Worker\Handler\AbstractHandler {
+    public function setWorkerId(string $workerId): \Maleficarum\Worker\Handler\AbstractHandler {
         $this->workerId = $workerId;
 
         return $this;
@@ -128,9 +127,9 @@ abstract class AbstractHandler
     /**
      * Fetch current worker id.
      *
-     * @return string
+     * @return null|string
      */
-    private function getWorkerId() {
+    private function getWorkerId(): ?string {
         return $this->workerId;
     }
 
@@ -141,7 +140,7 @@ abstract class AbstractHandler
      *
      * @return \Maleficarum\Worker\Handler\AbstractHandler
      */
-    public function setCommand(\Maleficarum\Command\AbstractCommand $command) : \Maleficarum\Worker\Handler\AbstractHandler {
+    public function setCommand(\Maleficarum\Command\AbstractCommand $command): \Maleficarum\Worker\Handler\AbstractHandler {
         $this->command = $command;
 
         return $this;
@@ -154,7 +153,7 @@ abstract class AbstractHandler
      *
      * @return \Maleficarum\Worker\Handler\AbstractHandler
      */
-    public function addCommand(\Maleficarum\Command\AbstractCommand $cmd) : \Maleficarum\Worker\Handler\AbstractHandler {
+    public function addCommand(\Maleficarum\Command\AbstractCommand $cmd): \Maleficarum\Worker\Handler\AbstractHandler {
         $this
             ->getQueue()
             ->addCommand($cmd->setParentHandlerId($this->getHandlerId()));
@@ -169,7 +168,7 @@ abstract class AbstractHandler
      *
      * @return \Maleficarum\Worker\Handler\AbstractHandler
      */
-    public function addCommands(array $commands) : \Maleficarum\Worker\Handler\AbstractHandler {
+    public function addCommands(array $commands): \Maleficarum\Worker\Handler\AbstractHandler {
         foreach ($commands as $command) {
             $command->setParentHandlerId($this->getHandlerId());
         }
@@ -184,9 +183,9 @@ abstract class AbstractHandler
     /**
      * Fetch current command.
      *
-     * @return \Maleficarum\Command\AbstractCommand
+     * @return \Maleficarum\Command\AbstractCommand|null
      */
-    public function getCommand() {
+    public function getCommand(): ?\Maleficarum\Command\AbstractCommand {
         return $this->command;
     }
     /* ------------------------------------ Setters & Getters END -------------------------------------- */

@@ -5,8 +5,7 @@
 
 namespace Maleficarum\Worker\Logger;
 
-trait Dependant
-{
+trait Dependant {
     /**
      * Internal storage for the cache provider object.
      *
@@ -32,7 +31,7 @@ trait Dependant
      *
      * @return \Maleficarum\Worker\Logger\Logger|null
      */
-    public function getLogger() {
+    public function getLogger(): ?\Maleficarum\Worker\Logger\Logger {
         return $this->loggerStorage;
     }
 

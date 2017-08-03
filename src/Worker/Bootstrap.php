@@ -2,7 +2,7 @@
 /**
  * PHP 7.0 compatible
  */
-declare (strict_types = 1);
+declare (strict_types=1);
 
 /**
  * This class manages all bootstrap operations for the application.
@@ -11,7 +11,6 @@ declare (strict_types = 1);
 namespace Maleficarum\Worker;
 
 class Bootstrap {
-
     /* ------------------------------------ Class Constant START --------------------------------------- */
 
     const INITIALIZER_ERRORS = ['Maleficarum\Worker\Basic\Initializer', 'setUpErrorHandling'];
@@ -45,13 +44,15 @@ class Bootstrap {
      *
      * @return \Maleficarum\Worker\Bootstrap
      */
-    public function initialize() : \Maleficarum\Worker\Bootstrap {
+    public function initialize(): \Maleficarum\Worker\Bootstrap {
         // register bootstrap as dependency for use in initializer steps
         \Maleficarum\Ioc\Container::registerDependency('Maleficarum\Bootstrap', $this);
 
         // validate and execute initializers
         foreach ($this->getInitializers() as $key => $initializer) {
-            if (!is_callable($initializer)) throw new \LogicException(sprintf('Invalid initializer passed to the bootstrap initialization process. \%s()', __METHOD__));
+            if (!is_callable($initializer)) {
+                throw new \LogicException(sprintf('Invalid initializer passed to the bootstrap initialization process. \%s()', __METHOD__));
+            }
             $init_name = $initializer($this->getParamContainer());
 
             try {
@@ -70,7 +71,7 @@ class Bootstrap {
      *
      * @return \Maleficarum\Worker\Bootstrap
      */
-    public function conclude($name = '[anonymous-worker]') : \Maleficarum\Worker\Bootstrap {
+    public function conclude($name = '[anonymous-worker]'): \Maleficarum\Worker\Bootstrap {
         echo $name . ' Worker operations concluded!!!' . PHP_EOL;
 
         return $this;
@@ -83,7 +84,7 @@ class Bootstrap {
      *
      * @return array
      */
-    public function getParamContainer() {
+    public function getParamContainer(): array {
         return $this->paramContainer;
     }
 
@@ -94,7 +95,7 @@ class Bootstrap {
      *
      * @return \Maleficarum\Worker\Bootstrap
      */
-    public function setParamContainer(array $paramContainer = []) : \Maleficarum\Worker\Bootstrap {
+    public function setParamContainer(array $paramContainer = []): \Maleficarum\Worker\Bootstrap {
         $this->paramContainer = $paramContainer;
 
         return $this;
@@ -105,7 +106,7 @@ class Bootstrap {
      *
      * @return array
      */
-    protected function getInitializers() : array {
+    protected function getInitializers(): array {
         return $this->initializers;
     }
 
@@ -116,7 +117,7 @@ class Bootstrap {
      *
      * @return \Maleficarum\Worker\Bootstrap
      */
-    public function setInitializers(array $initializers) : \Maleficarum\Worker\Bootstrap {
+    public function setInitializers(array $initializers): \Maleficarum\Worker\Bootstrap {
         $this->initializers = $initializers;
 
         return $this;

@@ -5,8 +5,7 @@
 
 namespace Maleficarum\Worker\Process;
 
-class Master
-{
+class Master {
     /**
      * Use \Maleficarum\Config\Dependant functionality.
      *
@@ -57,7 +56,7 @@ class Master
      *
      * @return \Maleficarum\Worker\Process\Master
      */
-    public function init(string $name, string $channel) : \Maleficarum\Worker\Process\Master {
+    public function init(string $name, string $channel): \Maleficarum\Worker\Process\Master {
         $this->getQueue()->init();
         $this->name = $name;
         $this->channel = $channel;
@@ -70,7 +69,7 @@ class Master
      *
      * @return \Maleficarum\Worker\Process\Master
      */
-    public function execute() : \Maleficarum\Worker\Process\Master {
+    public function execute(): \Maleficarum\Worker\Process\Master {
         $channel = $this->getQueue()->getChannel($this->channel);
         $channel->basic_qos(null, 1, null);
         $channel->basic_consume($this->getConfig()['queue']['commands']['queue-name'], '', false, false, false, false, [$this, 'handleCommand']);
@@ -87,7 +86,7 @@ class Master
      *
      * @return \Maleficarum\Worker\Process\Master
      */
-    public function conclude() : \Maleficarum\Worker\Process\Master {
+    public function conclude(): \Maleficarum\Worker\Process\Master {
         $this->getQueue()->close();
 
         return $this;

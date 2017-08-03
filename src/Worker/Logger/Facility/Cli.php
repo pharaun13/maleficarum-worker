@@ -7,8 +7,7 @@
 
 namespace Maleficarum\Worker\Logger\Facility;
 
-class Cli implements Facility
-{
+class Cli implements Facility {
     /**
      * Internal constant for the "End-Of-Line" element.
      *
@@ -18,7 +17,7 @@ class Cli implements Facility
 
     /**
      * Write the specified data to the logging facility.
-     * 
+     *
      * @see \Maleficarum\Worker\Logger\Facility\Facility::write()
      *
      * @param string $data
@@ -26,7 +25,7 @@ class Cli implements Facility
      *
      * @return \Maleficarum\Worker\Logger\Facility\Facility
      */
-    public function write($data, string $level) : \Maleficarum\Worker\Logger\Facility\Facility {
+    public function write($data, string $level): \Maleficarum\Worker\Logger\Facility\Facility {
         if (!is_string($level)) {
             throw new \InvalidArgumentException(sprintf('Incorrect debug level provided - string expected. \%s::write()'));
         }

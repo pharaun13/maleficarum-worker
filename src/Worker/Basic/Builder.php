@@ -2,7 +2,7 @@
 /**
  * PHP 7.0 compatible
  */
-declare (strict_types = 1);
+declare (strict_types=1);
 
 /**
  * This class contains default builders for most Maleficarum internal components.
@@ -11,7 +11,6 @@ declare (strict_types = 1);
 namespace Maleficarum\Worker\Basic;
 
 class Builder {
-
     /* ------------------------------------ Class Constant START --------------------------------------- */
 
     const builderList = [
@@ -32,7 +31,7 @@ class Builder {
      *
      * @return \Maleficarum\Worker\Basic\Builder
      */
-    public function register(string $type, $opts = []) : \Maleficarum\Worker\Basic\Builder {
+    public function register(string $type, array $opts = []): \Maleficarum\Worker\Basic\Builder {
         if (in_array($type, self::builderList)) {
             $type = 'register' . ucfirst($type);
             $this->$type($opts);
@@ -48,7 +47,7 @@ class Builder {
      *
      * @return \Maleficarum\Worker\Basic\Builder
      */
-    private function registerProcess(array $opts = []) : \Maleficarum\Worker\Basic\Builder {
+    private function registerProcess(array $opts = []): \Maleficarum\Worker\Basic\Builder {
         \Maleficarum\Ioc\Container::register('Maleficarum\Worker\Process\Master', function ($dep) {
             return (new \Maleficarum\Worker\Process\Master())
                 ->setQueue($dep['Maleficarum\CommandQueue'])
@@ -67,11 +66,13 @@ class Builder {
      *
      * @return \Maleficarum\Worker\Basic\Builder
      */
-    private function registerHandler(array $opts = []) : \Maleficarum\Worker\Basic\Builder {
+    private function registerHandler(array $opts = []): \Maleficarum\Worker\Basic\Builder {
         \Maleficarum\Ioc\Container::register('Handler', function ($dep, $opts) {
             /** @var \Maleficarum\Worker\Handler\AbstractHandler $handler */
             $handler = new $opts['__class']();
-            if (!$handler instanceof \Maleficarum\Worker\Handler\AbstractHandler) throw new \RuntimeException('Handler builder function used to create a non handler class. \Maleficarum\Ioc\Container::get()');
+            if (!$handler instanceof \Maleficarum\Worker\Handler\AbstractHandler) {
+                throw new \RuntimeException('Handler builder function used to create a non handler class. \Maleficarum\Ioc\Container::get()');
+            }
             $handler
                 ->setQueue($dep['Maleficarum\CommandQueue'])
                 ->setLogger($dep['Maleficarum\Logger'])
@@ -93,7 +94,7 @@ class Builder {
      *
      * @return \Maleficarum\Worker\Basic\Builder
      */
-    private function registerLogger(array $opts = []) : \Maleficarum\Worker\Basic\Builder {
+    private function registerLogger(array $opts = []): \Maleficarum\Worker\Basic\Builder {
         \Maleficarum\Ioc\Container::register('Maleficarum\Worker\Logger\Logger', function ($dep) {
             if (!isset($dep['Maleficarum\Config']['logger']['facilities'])) {
                 throw new \RuntimeException('Cannot access the logger object - missing logger configuration. \Maleficarum\Ioc\Container::get()');
@@ -117,5 +118,4 @@ class Builder {
     }
 
     /* ------------------------------------ Class Methods END ------------------------------------------ */
-
 }

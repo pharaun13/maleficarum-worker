@@ -5,8 +5,7 @@
 
 namespace Maleficarum\Worker\Logger\Facility;
 
-interface Facility
-{
+interface Facility {
     /**
      * Write the specified data to the logging facility.
      *
@@ -15,5 +14,5 @@ interface Facility
      *
      * @return \Maleficarum\Worker\Logger\Facility\Facility
      */
-    public function write($data, string $level) : \Maleficarum\Worker\Logger\Facility\Facility;
+    public function write($data, string $level): \Maleficarum\Worker\Logger\Facility\Facility;
 }

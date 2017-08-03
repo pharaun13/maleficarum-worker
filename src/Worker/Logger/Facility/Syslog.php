@@ -7,8 +7,7 @@
 
 namespace Maleficarum\Worker\Logger\Facility;
 
-class Syslog implements Facility
-{
+class Syslog implements Facility {
     /**
      * Internal constant for the "End-Of-Line" element.
      *
@@ -26,7 +25,7 @@ class Syslog implements Facility
      *
      * @return \Maleficarum\Worker\Logger\Facility\Facility
      */
-    public function write($data, string $level) : \Maleficarum\Worker\Logger\Facility\Facility {
+    public function write($data, string $level): \Maleficarum\Worker\Logger\Facility\Facility {
         if (!is_string($level)) {
             throw new \InvalidArgumentException(sprintf('Incorrect debug level provided - string expected. \%s::write()'));
         }

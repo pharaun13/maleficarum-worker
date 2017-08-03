@@ -1,14 +1,14 @@
 <?php
 
 \Maleficarum\Ioc\Container::register('Maleficarum\Worker\Process\Master', function () {
-    $profilerMock = $this->createMock('Maleficarum\Profiler\Time');
+    $profilerMock = $this->createMock('Maleficarum\Profiler\Time\Generic');
     $profilerMock->expects($this->any())->method('clear')->will($this->returnValue($profilerMock));
     $profilerMock->expects($this->any())->method('begin')->will($this->returnValue($profilerMock));
     $profilerMock->expects($this->any())->method('end')->will($this->returnValue($profilerMock));
 
     $configMock = $this->createMock('Maleficarum\Config\Ini\Config');
     $loggerMock = $this->createMock('Maleficarum\Worker\Logger\Logger');
-    $queueMock = $this->createMock('Maleficarum\Rabbitmq\Connection');
+    $queueMock = $this->createMock('Maleficarum\Rabbitmq\Connection\Connection');
     $channelMock = $this->createMock('PhpAmqpLib\Channel\AMQPChannel');
 
     // testMainLoop

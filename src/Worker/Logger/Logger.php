@@ -5,8 +5,7 @@
 
 namespace Maleficarum\Worker\Logger;
 
-class Logger
-{
+class Logger {
     /**
      * Internal storage for assigned facilities.
      *
@@ -33,7 +32,7 @@ class Logger
      * @throws \InvalidArgumentException
      * @return \Maleficarum\Worker\Logger\Logger
      */
-    public function log($data, string $level = null) : \Maleficarum\Worker\Logger\Logger {
+    public function log($data, string $level = null): \Maleficarum\Worker\Logger\Logger {
         if (!is_string($level)) {
             throw new \InvalidArgumentException('Incorrect debug level provided - string expected. \Maleficarum\Worker\Logger\Logger');
         }
@@ -47,12 +46,12 @@ class Logger
 
     /**
      * Attach a new facility to this logger service.
-     * 
+     *
      * @param \Maleficarum\Worker\Logger\Facility\Facility $facility
      *
      * @return \Maleficarum\Worker\Logger\Logger
      */
-    public function attachFacility(\Maleficarum\Worker\Logger\Facility\Facility $facility) : \Maleficarum\Worker\Logger\Logger {
+    public function attachFacility(\Maleficarum\Worker\Logger\Facility\Facility $facility): \Maleficarum\Worker\Logger\Logger {
         $this->facilities[\get_class($facility)] = $facility;
 
         return $this;
@@ -60,12 +59,12 @@ class Logger
 
     /**
      * Detach a facility from this logger service.
-     * 
+     *
      * @param \Maleficarum\Worker\Logger\Facility\Facility $facility
      *
      * @return \Maleficarum\Worker\Logger\Logger
      */
-    public function detachFacility(\Maleficarum\Worker\Logger\Facility\Facility $facility) : \Maleficarum\Worker\Logger\Logger {
+    public function detachFacility(\Maleficarum\Worker\Logger\Facility\Facility $facility): \Maleficarum\Worker\Logger\Logger {
         unset($this->facilities[\get_class($facility)]);
 
         return $this;
