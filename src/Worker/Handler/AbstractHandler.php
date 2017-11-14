@@ -129,7 +129,7 @@ abstract class AbstractHandler {
      *
      * @return null|string
      */
-    private function getWorkerId(): ?string {
+    public function getWorkerId(): ?string {
         return $this->workerId;
     }
 

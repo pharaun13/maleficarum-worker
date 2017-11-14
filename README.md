@@ -1,6 +1,10 @@
 # Change Log
 This is the Maleficarum Worker component implementation. 
 
+## [6.0.1] - 2017-11-14
+### Changed
+- Change getWorkerId method visibility
+
 ## [6.0.0] - 2017-08-03
 ### Changed
 - Make use of nullable types provided in PHP 7.1 (http://php.net/manual/en/migration71.new-features.php)
