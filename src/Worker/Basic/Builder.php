@@ -10,6 +10,8 @@ declare (strict_types=1);
 
 namespace Maleficarum\Worker\Basic;
 
+use function foo\func;
+
 class Builder {
     /* ------------------------------------ Class Constant START --------------------------------------- */
 
@@ -50,10 +52,8 @@ class Builder {
     private function registerProcess(array $opts = []): \Maleficarum\Worker\Basic\Builder {
         \Maleficarum\Ioc\Container::register('Maleficarum\Worker\Process\Master', function ($dep) {
             return (new \Maleficarum\Worker\Process\Master())
-                ->setQueue($dep['Maleficarum\CommandQueue'])
-                ->setLogger($dep['Maleficarum\Logger'])
-                ->setConfig($dep['Maleficarum\Config'])
-                ->addProfiler($dep['Maleficarum\Profiler\Time'], 'time');
+                ->setQueue($dep['Maleficarum\CommandRouter'])
+                ->setLogger($dep['Maleficarum\Logger']);
         });
 
         return $this;
@@ -70,20 +70,25 @@ class Builder {
         \Maleficarum\Ioc\Container::register('Handler', function ($dep, $opts) {
             /** @var \Maleficarum\Worker\Handler\AbstractHandler $handler */
             $handler = new $opts['__class']();
-            if (!$handler instanceof \Maleficarum\Worker\Handler\AbstractHandler) {
-                throw new \RuntimeException('Handler builder function used to create a non handler class. \Maleficarum\Ioc\Container::get()');
-            }
-            $handler
-                ->setQueue($dep['Maleficarum\CommandQueue'])
-                ->setLogger($dep['Maleficarum\Logger'])
-                ->addProfiler($dep['Maleficarum\Profiler\Time'], 'time');
-
+            if (!$handler instanceof \Maleficarum\Worker\Handler\AbstractHandler) throw new \RuntimeException('Handler builder function used to create a non handler class. \Maleficarum\Ioc\Container::get()');
+            
+            (method_exists($handler, 'setQueue') && isset($dep['Maleficarum\CommandRouter'])) and $handler->setQueue($dep['Maleficarum\CommandRouter']);
+            (method_exists($handler, 'setLogger') && isset($dep['Maleficarum\Logger'])) and $handler->setLogger($dep['Maleficarum\Logger']);
             (method_exists($handler, 'setRedis') && isset($dep['Maleficarum\Redis'])) and $handler->setRedis($dep['Maleficarum\Redis']);
             (method_exists($handler, 'setConfig') && isset($dep['Maleficarum\Config'])) and $handler->setConfig($dep['Maleficarum\Config']);
 
             return $handler;
         });
 
+        \Maleficarum\Ioc\Container::register('Maleficarum\Worker\Handler\Encapsulator', function ($dep, $opts) {
+            $enc = new $opts['__class']();
+            if (!$enc instanceof \Maleficarum\Worker\Handler\Encapsulator\AbstractEncapsulator) throw new \RuntimeException('Encapsulator builder function used to create a non encapsulator class. \Maleficarum\Ioc\Container::get()');
+
+            method_exists($enc, 'addProfiler') and $enc->addProfiler(\Maleficarum\Ioc\Container::get('Maleficarum\Profiler\Time\Generic'), 'time');
+            
+            return $enc;
+        });
+        
         return $this;
     }
 

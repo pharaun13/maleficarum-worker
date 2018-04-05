@@ -1,6 +1,23 @@
 # Change Log
 This is the Maleficarum Worker component implementation. 
 
+## [7.0.0] - 2018-10-04
+### Changed   
+- Added the multi source consumer mode: 
+    - It is now possible to consume commands from multiple source queues over multiple independent connections without blocking other connections.
+    - Each connection/queue has it's own priority that can be set via the config file. 
+    - Queues with matching priority setting will be served in the round robin fashion.
+    - Queues with lower priority will be used only when all higher priority queues have been emptied.
+- Reworked worker implementation to use the new Maleficarum RabbitMQ connection manager.
+    - Persistent connections will be automatically added as command sources and trigger the multi source consumer mode if more than one are defined.
+    - Transient connections will be available in command handlers via the connection manager to easily add commands to external queues.
+- Complete rework on how handlers operate.
+    - Added access to the rabbitmq connection manager to allow for easy command propagation.
+    - Implemented handler encapsulation logic. This way each individual handler can define a list of encapsulators it wants called both prior to and after the handle process. 
+    - Added an encapsulator interface for application specific encapsulator implementations.
+    - Implemented the "Information" encapsulator - it adds basic command handle information to the logs. 
+    - Implemented the "Deadletter" encapsulator - it adds the command to a deadletter queue when the handler returns false as the handle result. 
+
 ## [6.0.1] - 2017-11-14
 ### Changed
 - Change getWorkerId method visibility

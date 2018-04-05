@@ -50,22 +50,14 @@ abstract class AbstractHandler {
      */
     private $command = null;
 
-    /* ------------------------------------ AbstractHandler methods START ------------------------------ */
     /**
-     * Send specified message to the log.
-     *
-     * @param string $message
-     *
-     * @return \Maleficarum\Worker\Handler\AbstractHandler
+     * Internal storage for the list 
+     * 
+     * @var array 
      */
-    protected function log(string $message): \Maleficarum\Worker\Handler\AbstractHandler {
-        $this
-            ->getLogger()
-            ->log('[' . $this->getWorkerId() . '] ' . '[' . $this->getHandlerId() . '] ' . $message, 'PHP Worker Info');
-
-        return $this;
-    }
-    /* ------------------------------------ AbstractHandler methods END -------------------------------- */
+    protected $encapsulators = [
+        'Maleficarum\Worker\Handler\Encapsulator\Information'
+    ];
 
     /* ------------------------------------ Abstract methods START ------------------------------------- */
     /**
@@ -73,9 +65,53 @@ abstract class AbstractHandler {
      *
      * @return bool
      */
-    abstract public function handle(): bool;
+    abstract public function handle() : bool;
     /* ------------------------------------ Abstract methods END --------------------------------------- */
 
+    /* ------------------------------------ Class Methods START ---------------------------------------- */
+
+    /**
+     * Send specified message to the log.
+     *
+     * @param string $message
+     *
+     * @return \Maleficarum\Worker\Handler\AbstractHandler
+     */
+    public function log(string $message): \Maleficarum\Worker\Handler\AbstractHandler {
+        $this
+            ->getLogger()
+            ->log('[' . $this->getWorkerId() . '] ' . '[' . $this->getHandlerId() . '] ' . $message, 'PHP Worker Info');
+
+        return $this;
+    }
+    
+    /**
+     * Process the handler. This executes any pre encapsulator logic, proceeds to the handle logic and follows with the encapsulator post logic.
+     * 
+     * @return bool
+     */
+    public function process() : bool {
+        // create all encapsulators
+        $encs = [];
+        foreach ($this->encapsulators as $enc) {
+            $enc = \Maleficarum\Ioc\Container::get($enc);
+            if (!$enc instanceof \Maleficarum\Worker\Handler\Encapsulator\AbstractEncapsulator) throw new \RuntimeException(sprintf('Classes specified as handler encapsulators MUST implement the \Maleficarum\Worker\Handler\Encapsulator\Encapsulator interface. %s', __METHOD__));
+            $encs[] = $enc;
+        }
+        
+        // pre handle encapsulation
+        foreach ($encs as $enc) $enc->beforeHandle($this);
+        
+        $result = $this->handle();
+        
+        // post handle encapsulation
+        foreach (array_reverse($encs) as $enc) $enc->afterHandle($this, $result);
+        
+        return $result;
+    }
+    
+    /* ------------------------------------ Class Methods END ------------------------------------------ */
+    
     /* ------------------------------------ Setters & Getters START ------------------------------------ */
     /**
      * Set current command handler id string.
@@ -147,40 +183,6 @@ abstract class AbstractHandler {
     }
 
     /**
-     * Add a new command to the queue (this will automatically attach parent handler id)
-     *
-     * @param \Maleficarum\Command\AbstractCommand $cmd
-     *
-     * @return \Maleficarum\Worker\Handler\AbstractHandler
-     */
-    public function addCommand(\Maleficarum\Command\AbstractCommand $cmd): \Maleficarum\Worker\Handler\AbstractHandler {
-        $this
-            ->getQueue()
-            ->addCommand($cmd->setParentHandlerId($this->getHandlerId()));
-
-        return $this;
-    }
-
-    /**
-     * Add collection of commands to the queue
-     *
-     * @param array|\Maleficarum\Command\AbstractCommand[] $commands
-     *
-     * @return \Maleficarum\Worker\Handler\AbstractHandler
-     */
-    public function addCommands(array $commands): \Maleficarum\Worker\Handler\AbstractHandler {
-        foreach ($commands as $command) {
-            $command->setParentHandlerId($this->getHandlerId());
-        }
-
-        $this
-            ->getQueue()
-            ->addCommands($commands);
-
-        return $this;
-    }
-
-    /**
      * Fetch current command.
      *
      * @return \Maleficarum\Command\AbstractCommand|null
@@ -188,5 +190,6 @@ abstract class AbstractHandler {
     public function getCommand(): ?\Maleficarum\Command\AbstractCommand {
         return $this->command;
     }
+    
     /* ------------------------------------ Setters & Getters END -------------------------------------- */
 }

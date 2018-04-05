@@ -10,7 +10,7 @@
         "maleficarum/config": "^4.0",
         "maleficarum/profiler": "^4.0",
         "maleficarum/handler": "^3.1",
-        "maleficarum/rabbitmq": "^7.0",
+        "maleficarum/rabbitmq": "^8.0",
         "maleficarum/command": "^2.0"
     },
     "require-dev": {
