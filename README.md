@@ -1,7 +1,7 @@
 # Change Log
 This is the Maleficarum Worker component implementation. 
 
-## [7.0.0] - 2018-10-04
+## [7.0.0] - 2018-06-04
 ### Changed   
 - Added the multi source consumer mode: 
     - It is now possible to consume commands from multiple source queues over multiple independent connections without blocking other connections.
