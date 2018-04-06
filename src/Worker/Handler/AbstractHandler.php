@@ -62,7 +62,7 @@ abstract class AbstractHandler {
      * 
      * @var array 
      */
-    protected $encapsulators = [
+    private $encapsulators = [
         'Maleficarum\Worker\Handler\Encapsulator\Information'
     ];
 
@@ -100,7 +100,7 @@ abstract class AbstractHandler {
     public function process() : bool {
         // create all encapsulators
         $encs = [];
-        foreach ($this->encapsulators as $enc) {
+        foreach ($this->getEncapsulators() as $enc) {
             $enc = \Maleficarum\Ioc\Container::get($enc, [$this]);
             if (!$enc instanceof \Maleficarum\Worker\Handler\Encapsulator\AbstractEncapsulator) throw new \RuntimeException(sprintf('Classes specified as handler encapsulators MUST implement the \Maleficarum\Worker\Handler\Encapsulator\Encapsulator interface. %s', __METHOD__));
             $encs[] = $enc;
@@ -215,6 +215,25 @@ abstract class AbstractHandler {
      */
     public function setRegistry(array $registry) : \Maleficarum\Worker\Handler\AbstractHandler {
         $this->registry = $registry;
+        return $this;
+    }
+
+    /**
+     * Fetch all encapsulators.
+     * 
+     * @return array
+     */
+    protected function getEncapsulators() : array {
+        return $this->encapsulators;
+    }
+
+    /**
+     * Set new encapsulators.
+     * 
+     * @param array $encapsulators
+     */
+    private function setEncapsulators(array $encapsulators) : \Maleficarum\Worker\Handler\AbstractHandler {
+        $this->encapsulators = $encapsulators;
         return $this;
     }
     
