@@ -51,6 +51,13 @@ abstract class AbstractHandler {
     private $command = null;
 
     /**
+     * Internal storage for the registry array used to pass data between the handler and its encapsulators.
+     * 
+     * @var array 
+     */
+    private $registry = [];
+    
+    /**
      * Internal storage for the list 
      * 
      * @var array 
@@ -94,18 +101,18 @@ abstract class AbstractHandler {
         // create all encapsulators
         $encs = [];
         foreach ($this->encapsulators as $enc) {
-            $enc = \Maleficarum\Ioc\Container::get($enc);
+            $enc = \Maleficarum\Ioc\Container::get($enc, [$this]);
             if (!$enc instanceof \Maleficarum\Worker\Handler\Encapsulator\AbstractEncapsulator) throw new \RuntimeException(sprintf('Classes specified as handler encapsulators MUST implement the \Maleficarum\Worker\Handler\Encapsulator\Encapsulator interface. %s', __METHOD__));
             $encs[] = $enc;
         }
         
         // pre handle encapsulation
-        foreach ($encs as $enc) $enc->beforeHandle($this);
+        foreach ($encs as $enc) $enc->beforeHandle();
         
         $result = $this->handle();
         
         // post handle encapsulation
-        foreach (array_reverse($encs) as $enc) $enc->afterHandle($this, $result);
+        foreach (array_reverse($encs) as $enc) $enc->afterHandle($result);
         
         return $result;
     }
@@ -189,6 +196,26 @@ abstract class AbstractHandler {
      */
     public function getCommand(): ?\Maleficarum\Command\AbstractCommand {
         return $this->command;
+    }
+    
+    /**
+     * Fetch current registry object.
+     * 
+     * @return array
+     */
+    public function getRegistry() : array {
+        return $this->registry;
+    }
+    
+    /**
+     * Set a new registry object.
+     * 
+     * @param array $registry
+     * @return \Maleficarum\Worker\Handler\AbstractHandler
+     */
+    public function setRegistry(array $registry) : \Maleficarum\Worker\Handler\AbstractHandler {
+        $this->registry = $registry;
+        return $this;
     }
     
     /* ------------------------------------ Setters & Getters END -------------------------------------- */

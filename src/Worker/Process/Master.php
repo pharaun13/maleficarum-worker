@@ -212,11 +212,8 @@ class Master {
             ->setHandlerId(uniqid('HID-'))
             ->setCommand($command);
 
-        if ($handler->process()) {
-            $message->delivery_info['channel']->basic_ack($message->delivery_info['delivery_tag']);
-        } else {
-            $message->delivery_info['channel']->basic_nack($message->delivery_info['delivery_tag'], false, true);
-        }
+        $handler->process();
+        $message->delivery_info['channel']->basic_ack($message->delivery_info['delivery_tag']);
 
         return $this;
     }

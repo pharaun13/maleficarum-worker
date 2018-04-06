@@ -17,25 +17,14 @@ class Information extends \Maleficarum\Worker\Handler\Encapsulator\AbstractEncap
     use \Maleficarum\Profiler\Dependant;
     
     /* ------------------------------------ Class Traits END ------------------------------------------- */
-
-    /* ------------------------------------ Class Property START --------------------------------------- */
-
-    /**
-     * Internal storage for the handle execution start time.
-     * 
-     * @var int
-     */
-    private $start = 0;
-    
-    /* ------------------------------------ Class Property END ----------------------------------------- */
     
     /* ------------------------------------ Interface methods START ------------------------------------ */
     
     /**
      * @see \Maleficarum\Worker\Handler\Encapsulator\Encapsulator::beforeHandle()
      */
-    public function beforeHandle(\Maleficarum\Worker\Handler\AbstractHandler $handler): bool {
-        $handler->log('Received command. Type: ' . $handler->getCommand()->getType() . ' || Data: ' . $handler->getCommand(), 'PHP Worker Info');
+    public function beforeHandle() : bool {
+        $this->log('Received command. Type: ' . $this->getHandler()->getCommand()->getType() . ' || Data: ' . $this->getHandler()->getCommand());
         $this->getProfiler('time')->begin();
 
         return true;
@@ -44,11 +33,11 @@ class Information extends \Maleficarum\Worker\Handler\Encapsulator\AbstractEncap
     /**
      * @see \Maleficarum\Worker\Handler\Encapsulator\Encapsulator::afterHandle()
      */
-    public function afterHandle(\Maleficarum\Worker\Handler\AbstractHandler $handler, bool $result): bool {
+    public function afterHandle(bool $result): bool {
         $exec = round($this->getProfiler('time')->end()->getProfile(), 4);
 
-        $result and $handler->log('Command handler COMPLETE. Type: ' . $handler->getCommand()->getType() . ' [Exec time: ' . $exec . 's]', 'PHP Worker Info');
-        $result or $handler->log('Command handler FAILED - command dropped. Type: ' . $handler->getCommand()->getType() . ' [Exec time: ' . $exec . 's]', 'PHP Worker Info');
+        $result and $this->log('Command handler COMPLETE. Type: ' . $this->getHandler()->getCommand()->getType() . ' [Exec time: ' . $exec . 's]');
+        $result or $this->log('Command handler FAILED - command dropped. Type: ' . $this->getHandler()->getCommand()->getType() . ' [Exec time: ' . $exec . 's]');
         return true;
     }
     

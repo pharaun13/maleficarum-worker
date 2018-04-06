@@ -81,10 +81,11 @@ class Builder {
         });
 
         \Maleficarum\Ioc\Container::register('Maleficarum\Worker\Handler\Encapsulator', function ($dep, $opts) {
-            $enc = new $opts['__class']();
+            $enc = new $opts['__class']($opts[0]);
             if (!$enc instanceof \Maleficarum\Worker\Handler\Encapsulator\AbstractEncapsulator) throw new \RuntimeException('Encapsulator builder function used to create a non encapsulator class. \Maleficarum\Ioc\Container::get()');
 
             method_exists($enc, 'addProfiler') and $enc->addProfiler(\Maleficarum\Ioc\Container::get('Maleficarum\Profiler\Time\Generic'), 'time');
+            (method_exists($enc, 'setQueue') && isset($dep['Maleficarum\CommandRouter'])) and $enc->setQueue($dep['Maleficarum\CommandRouter']);
             
             return $enc;
         });
