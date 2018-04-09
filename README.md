@@ -1,6 +1,10 @@
 # Change Log
 This is the Maleficarum Worker component implementation. 
 
+## [7.0.1] - 2018-09-04
+### Changed
+- Added additional protection in the Deadletter encapsulation that will keep the worker process from exiting if the deadletter connection was misconfigured. 
+
 ## [7.0.0] - 2018-06-04
 ### Changed   
 - Added the multi source consumer mode: 

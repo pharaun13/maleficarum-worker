@@ -41,10 +41,12 @@ class Deadletter extends \Maleficarum\Worker\Handler\Encapsulator\AbstractEncaps
                     $this->getQueue()->addCommand($this->getHandler()->getCommand(), 'deadletter');
                     $this->log('Deadletter encapsulator activated - message was added to the deadletter queue.');
                 } catch (\InvalidArgumentException $e) {
-                    $this->log('Deadletter encapsulator activated but the deadletter connection was not configured - message was not added to the deadletter queue.');
+                    $this->log('Deadletter encapsulator activated but the deadletter connection was not configured - message was NOT added to the deadletter queue.');
+                } catch (\PhpAmqpLib\Exception\AMQPProtocolConnectionException $e) {
+                    $this->log('Deadletter encapsulator activated but the deadletter connection was not properly configured - message was NOT added to the deadletter queue.');
                 }
             } else {
-                $this->log('Deadletter encapsulator overridden - message was not added to the deadletter queue.');
+                $this->log('Deadletter encapsulator overridden - message was NOT added to the deadletter queue.');
             }
         }
         
