@@ -116,6 +116,37 @@ abstract class AbstractHandler {
         
         return $result;
     }
+
+    /**
+     * Add a new command to the queue (this will automatically attach parent handler id)
+     *
+     * @param \Maleficarum\Command\AbstractCommand $cmd
+     * @param string $connection
+     * @return \Maleficarum\Worker\Handler\AbstractHandler
+     */
+    public function addCommand(\Maleficarum\Command\AbstractCommand $cmd, string $connection) : \Maleficarum\Worker\Handler\AbstractHandler {
+        $this
+            ->getQueue()
+            ->addCommand($cmd->setParentHandlerId($this->getHandlerId()), $connection);
+        return $this;
+    }
+    
+    /**
+     * Add collection of commands to the queue
+     *
+     * @param array|\Maleficarum\Command\AbstractCommand[] $commands
+     * @param string $connection
+     * @return \Maleficarum\Worker\Handler\AbstractHandler
+     */
+    public function addCommands(array $commands, string $connection) : \Maleficarum\Worker\Handler\AbstractHandler {
+        foreach ($commands as $command) {
+            $command->setParentHandlerId($this->getHandlerId());
+        }
+        $this
+            ->getQueue()
+            ->addCommands($commands, $connection);
+        return $this;
+    }
     
     /* ------------------------------------ Class Methods END ------------------------------------------ */
     

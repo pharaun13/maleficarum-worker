@@ -1,6 +1,13 @@
 # Change Log
 This is the Maleficarum Worker component implementation. 
 
+## [7.1.0] - 2018-10-04
+### Added
+- Added a new encapsulator: "Retry" that will attempt to requeue a failed command a specific number of times.
+- Reintroduced addCommand and addCommands helper methods to the abstract handler. [CAUTION: they have a new interface]
+### Changed
+- The Information encapsulator will now include message meta data information in the initial log entry.
+
 ## [7.0.1] - 2018-09-04
 ### Changed
 - Added additional protection in the Deadletter encapsulation that will keep the worker process from exiting if the deadletter connection was misconfigured. 

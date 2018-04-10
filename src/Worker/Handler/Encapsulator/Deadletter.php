@@ -7,17 +7,6 @@ declare (strict_types=1);
 namespace Maleficarum\Worker\Handler\Encapsulator;
 
 class Deadletter extends \Maleficarum\Worker\Handler\Encapsulator\AbstractEncapsulator {
-    /* ------------------------------------ Class Traits START ----------------------------------------- */
-
-    /**
-     * Use \Maleficarum\Rabbitmq\Dependant functionality.
-     *
-     * @trait
-     */
-    use \Maleficarum\Rabbitmq\Dependant;
-
-    /* ------------------------------------ Class Traits END ------------------------------------------- */
-
     /* ------------------------------------ Interface methods START ------------------------------------ */
 
     /**
@@ -38,7 +27,7 @@ class Deadletter extends \Maleficarum\Worker\Handler\Encapsulator\AbstractEncaps
             // add to deadletter - only if the registry does not explicitly stats that it should be skipped.
             if (!isset($registry['deadletter']['skip'])) {
                 try {
-                    $this->getQueue()->addCommand($this->getHandler()->getCommand(), 'deadletter');
+                    $this->getHandler()->addCommand(clone $this->getHandler()->getCommand(), 'deadletter');
                     $this->log('Deadletter encapsulator activated - message was added to the deadletter queue.');
                 } catch (\InvalidArgumentException $e) {
                     $this->log('Deadletter encapsulator activated but the deadletter connection was not configured - message was NOT added to the deadletter queue.');
