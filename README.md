@@ -1,6 +1,10 @@
 # Change Log
 This is the Maleficarum Worker component implementation. 
 
+## [7.1.3] - 2018-05-14
+### Fixed
+- Commands that do not pass internal validation will no longer cause an uncaught exception in the Deadletter and Retry encapsulators.
+
 ## [7.1.2] - 2018-05-14
 ### Added
 - Added a mandatory wait period between attempting to execute the master process loop from scratch when in multi source consumer mode. This will be parameterized in up comming releases - for now it's a hardcoded wait value.

@@ -70,6 +70,8 @@ class Retry extends \Maleficarum\Worker\Handler\Encapsulator\AbstractEncapsulato
                 $this->log('Retry encapsulator activated but the retry connection was not configured - message was NOT requeued.');
             } catch (\PhpAmqpLib\Exception\AMQPProtocolConnectionException $e) {
                 $this->log('Retry encapsulator activated but the retry connection was not properly configured - message was NOT requeued.');
+            } catch (\RuntimeException $e) {
+                $this->log('Retry encapsulator activated but the command validation failed - message was NOT requeued.');
             }
             
             // a retry will explicitly override the deadletter encapsulator
