@@ -1,6 +1,10 @@
 # Change Log
 This is the Maleficarum Worker component implementation. 
 
+## [7.1.2] - 2018-05-14
+### Added
+- Added a mandatory wait period between attempting to execute the master process loop from scratch when in multi source consumer mode. This will be parameterized in up comming releases - for now it's a hardcoded wait value.
+
 ## [7.1.1] - 2018-04-10
 ### Fixed
 - Incorrect date format in README entries.

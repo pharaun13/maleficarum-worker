@@ -171,7 +171,10 @@ class Master {
                         }
                     }
 
-                    if ($executed) break;
+                    if ($executed) {
+                        usleep(1000);
+                        break;
+                    }
                 }
             }
         }
