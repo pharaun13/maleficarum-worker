@@ -1,6 +1,10 @@
 # Change Log
 This is the Maleficarum Worker component implementation. 
 
+## [7.1.4] - 2018-05-17
+### Changed
+- Increased the hardcoded wait value for the multi source consumer mode to 10000 micro seconds.
+
 ## [7.1.3] - 2018-05-14
 ### Fixed
 - Commands that do not pass internal validation will no longer cause an uncaught exception in the Deadletter and Retry encapsulators.

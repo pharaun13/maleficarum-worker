@@ -172,7 +172,7 @@ class Master {
                     }
 
                     if ($executed) {
-                        usleep(1000);
+                        usleep(10000);
                         break;
                     }
                 }
