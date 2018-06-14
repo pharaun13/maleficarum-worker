@@ -47,6 +47,12 @@ class Master {
      */
     private $channel = 1;
 
+    /**
+     * Number of microseconds to wait between connection pool querying in multi-source mode.
+     * @var int 
+     */
+    private $multi_mode_wait_period = 10000;
+
     /* ------------------------------------ Class Methods START ---------------------------------------- */
     
     /**
@@ -54,12 +60,14 @@ class Master {
      *
      * @param string $name
      * @param string $channel
+     * @param int $wait
      *
      * @return \Maleficarum\Worker\Process\Master
      */
-    public function init(string $name, string $channel): \Maleficarum\Worker\Process\Master {
+    public function init(string $name, string $channel, int $wait = 10000): \Maleficarum\Worker\Process\Master {
         $this->name = $name;
         $this->channel = $channel;
+        $wait >= 0 and $this->multi_mode_wait_period = $wait;
 
         return $this;
     }
@@ -172,7 +180,7 @@ class Master {
                     }
 
                     if ($executed) {
-                        usleep(10000);
+                        ($this->multi_mode_wait_period > 0) and usleep($this->multi_mode_wait_period);
                         break;
                     }
                 }

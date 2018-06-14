@@ -1,6 +1,10 @@
 # Change Log
 This is the Maleficarum Worker component implementation. 
 
+## [7.2.0] - 2018-06-14
+### Changed
+- The wait period added in 7.1.2 is now no longer mandatory and can be parametrized via the process init method.
+
 ## [7.1.4] - 2018-05-17
 ### Changed
 - Increased the hardcoded wait value for the multi source consumer mode to 10000 micro seconds.
@@ -11,7 +15,7 @@ This is the Maleficarum Worker component implementation.
 
 ## [7.1.2] - 2018-05-14
 ### Added
-- Added a mandatory wait period between attempting to execute the master process loop from scratch when in multi source consumer mode. This will be parameterized in up comming releases - for now it's a hardcoded wait value.
+- Added a mandatory wait period between attempting to execute the master process loop from scratch when in multi source consumer mode. This will be parameterized in up coming releases - for now it's a hardcoded wait value.
 
 ## [7.1.1] - 2018-04-10
 ### Fixed
