@@ -51,7 +51,7 @@ class Master {
      * Number of microseconds to wait between connection pool querying in multi-source mode.
      * @var int 
      */
-    private $multi_mode_wait_period = 10000;
+    private $multi_mode_wait_period = 100000;
 
     /* ------------------------------------ Class Methods START ---------------------------------------- */
     
@@ -64,7 +64,7 @@ class Master {
      *
      * @return \Maleficarum\Worker\Process\Master
      */
-    public function init(string $name, string $channel, int $wait = 10000): \Maleficarum\Worker\Process\Master {
+    public function init(string $name, string $channel, int $wait = 100000): \Maleficarum\Worker\Process\Master {
         $this->name = $name;
         $this->channel = $channel;
         $wait >= 0 and $this->multi_mode_wait_period = $wait;
@@ -138,6 +138,8 @@ class Master {
         $exceptSockets = null;
         $sockets = [];
         $channels = [];
+        $executed = false;
+        $sockets_for_next_iteration = [];
         
         // fetch all source connections for manipulation 
         $connections = $this->getQueue()->fetchSources();
@@ -146,8 +148,8 @@ class Master {
         foreach ($connections as $priority_key => $priority) {
             foreach ($priority as $source) {
                 $sockets[] = $source->getConnection()->getSocket();
-                $chan          = $source->getChannel($this->channel);
-
+                $chan = $source->getChannel($this->channel);
+                
                 array_key_exists($priority_key, $channels) or $channels[$priority_key] = [];
                 $channels[$priority_key][]    = $chan;
                 $chan->basic_qos(null, 1, null);
@@ -160,29 +162,56 @@ class Master {
         
         // execute the consumer loop
         while (true) {
-            // we need to recover the full list of sockets since stream_select will overwrite it with a list of sockets that changed
-            $readSockets = $sockets;
-            
+            // switch over the executed param:
+            // this allows us to create a separate execution tree where we will attempt to give sockets from the previous loop a chance to get data again
+            // without this the priority fails since sockets of lower priority already have data ready while the sockets that were used might be empty for a while
+            if ($executed) {
+                // reset the execution loop - if this execution tree completes without any command handlers getting run we want to return to the default execution path
+                $executed = false;
+                
+                // we will only check the sockets marked for read in the previous iteration
+                $readSockets = $sockets_for_next_iteration;
+                
+                // check selected sockets
+                $numberChangedSockets = stream_select($readSockets, $writeSockets, $exceptSockets, 0, $this->multi_mode_wait_period);
+            } else {
+                // we need to recover the full list of sockets - this is the default execution path, we attempt to read from all sockets
+                $readSockets = $sockets;
+                
+                // check all sockets
+                $numberChangedSockets = stream_select($readSockets, $writeSockets, $exceptSockets, null, null);
+            }
+
             // select sockets that are ready for reads (from the list of all source sockets)
-            if (false === ($numberChangedSockets = stream_select($readSockets, $writeSockets, $exceptSockets, null))) {
+            if (false === $numberChangedSockets) {
                 $this->getLogger()->log('[' . $this->name . '] Multi source mode error - stream select call has failed.', 'PHP Worker Error');
             } elseif ($numberChangedSockets > 0) {
+                // reinitialize the list of sockets handled in this iteration - this will be used in the next iteration if a handler is executed in this run through
+                $sockets_for_next_iteration = [];
+
                 // iterate over the channel structure - since it carries the priority structure we will iterate over channels within a priority and break the loop one something in that priority happens
                 // this way channels with higher priority will consume first (round robin distribution for all channels with the same priority as the first channel that was ready to consume) while
                 // lower priority channels will have to wait (the upper loop break ensures that)
                 foreach ($channels as $key => $prio) {
-                    $executed = false;
+                    // this internal loop actually represents iterating over specific connections within a single priority level
                     foreach ($prio as $channel) {
+                        // any socket that was checked in this iteration has to be stored for reference in the next one - this way we ensure that even when a handler is called we will check
+                        // all socket for this priority and higher - not just the ones that had handlers executed on them.
+                        $sockets_for_next_iteration[] = $channel->getConnection()->getSocket();
+                        
+                        // execute the handler process for each socket that is ready to accept data
                         if (in_array($channel->getConnection()->getSocket(), $readSockets, true)) {
+                            // this marker will trigger the alternate execution path within the next iteration - thanks to that we'll only check the sockets that were checked in this iteration within
+                            // the next one (a timeout will be applied to ensure that executions on the alternate path will return to default path eventually) 
                             $executed = true;
+                            
+                            // execute the handler
                             $channel->wait();
                         }
                     }
 
-                    if ($executed) {
-                        ($this->multi_mode_wait_period > 0) and usleep($this->multi_mode_wait_period);
-                        break;
-                    }
+                    // stop execution at this priority level if a handler was called - lower levels must wait their turn
+                    if ($executed) break;
                 }
             }
         }

@@ -1,6 +1,15 @@
 # Change Log
 This is the Maleficarum Worker component implementation. 
 
+## [8.0.0] - 2018-06-18
+### Changed
+- Introduced the adaptive multi source consumer mode:
+    - This mode replaces the previous multi source consumer mode.
+    - This greatly improves the reliability of the priority system - queues in higher priority will now have a fixed amount of time to provide the next command message before control is passed to lower priority queues
+      but unlike the previous implementation the new command will be handled as soon as it is available instead of having a fixed wait time between handlers. This way there will be no performance impact on queues
+      that carry multiple commands before a priority switch is necessary.
+    - The grace period between priority switches can be defined via a parameter and carries the default value of 0.1 seconds. This parameter is ignored in single source mode.
+
 ## [7.2.0] - 2018-06-14
 ### Changed
 - The wait period added in 7.1.2 is now no longer mandatory and can be parametrized via the process init method.
