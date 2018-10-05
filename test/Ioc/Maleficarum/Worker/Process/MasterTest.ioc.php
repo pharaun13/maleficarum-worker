@@ -1,43 +1,40 @@
 <?php
 
-\Maleficarum\Ioc\Container::register('Maleficarum\Worker\Process\Master', function () {
-    $profilerMock = $this->createMock('Maleficarum\Profiler\Time\Generic');
-    $profilerMock->expects($this->any())->method('clear')->will($this->returnValue($profilerMock));
-    $profilerMock->expects($this->any())->method('begin')->will($this->returnValue($profilerMock));
-    $profilerMock->expects($this->any())->method('end')->will($this->returnValue($profilerMock));
-
-    $configMock = $this->createMock('Maleficarum\Config\Ini\Config');
+\Maleficarum\Ioc\Container::registerBuilder('Maleficarum\Worker\Process\Master', function () {
     $loggerMock = $this->createMock('Maleficarum\Worker\Logger\Logger');
-    $queueMock = $this->createMock('Maleficarum\Rabbitmq\Connection\Connection');
+    $rabbitConnectionMock = $this->createMock('Maleficarum\Rabbitmq\Connection\Connection');
+    $rabbitManagerMock = $this->createMock('Maleficarum\Rabbitmq\Manager\Manager');
     $channelMock = $this->createMock('PhpAmqpLib\Channel\AMQPChannel');
 
     // testMainLoop
     if ($this->getContext() === 'testMainLoop') {
-        $configMock
-            ->expects($this->once())
-            ->method('offsetGet')
-            ->with($this->equalTo('queue'))
-            ->will($this->returnValue(['commands' => ['queue-name' => 'test-queue']]));
-
-        $queueMock
+        $rabbitConnectionMock
             ->expects($this->once())
             ->method('getChannel')
             ->will($this->returnValue($channelMock));
+
+        $rabbitConnectionMock
+            ->expects($this->once())
+            ->method('getQueueName')
+            ->will($this->returnValue('test-queue'));
 
         $channelMock
             ->expects($this->once())
             ->method('basic_consume')
             ->with($this->equalTo('test-queue'));
+
+        $rabbitManagerMock
+            ->expects($this->exactly(2))
+            ->method('fetchSources')
+            ->will($this->returnValue([[$rabbitConnectionMock]]));
     }
 
     return (new \Maleficarum\Worker\Process\Master())
-        ->addProfiler($profilerMock, 'time')
-        ->setConfig($configMock)
         ->setLogger($loggerMock)
-        ->setQueue($queueMock);
+        ->setQueue($rabbitManagerMock);
 });
 
-\Maleficarum\Ioc\Container::register('PhpAmqpLib\Message\AMQPMessage', function () {
+\Maleficarum\Ioc\Container::registerBuilder('PhpAmqpLib\Message\AMQPMessage', function () {
     $msg = $this->createMock('PhpAmqpLib\Message\AMQPMessage');
 
     $msg->delivery_info['delivery_tag'] = 'test_tag';
@@ -56,7 +53,7 @@
     return $msg;
 });
 
-\Maleficarum\Ioc\Container::register('Handler\Log\Generic', function () {
+\Maleficarum\Ioc\Container::registerBuilder('Handler\Log\Generic', function () {
     $handlerMock = $this->createMock('Handler\Log\Generic');
     $handlerMock->expects($this->any())->method('setWorkerId')->will($this->returnValue($handlerMock));
     $handlerMock->expects($this->any())->method('setChId')->will($this->returnValue($handlerMock));

@@ -81,7 +81,7 @@ class Master {
     public function execute(): \Maleficarum\Worker\Process\Master {
         // get all source connections - this will be used to figure out which execution strategy to follow
         $sources = $this->getQueue()->fetchSources();
-        
+
         // the worker master process cannot operate without any active sources
         if (!count($sources)) throw new \RuntimeException(sprintf('No command sources available - terminating. %s', __METHOD__));
         
@@ -90,10 +90,10 @@ class Master {
         
         // more than one priority - multi connection strategy
         count($sources) > 1 and $strategy = self::EXEC_STRATEGY_MULTI;
-        
+
         // more than one connection in the top priority - multi connection strategy
         $strategy === self::EXEC_STRATEGY_SINGLE && count(array_shift($sources)) > 1 and $strategy = self::EXEC_STRATEGY_MULTI;
-        
+
         if (self::EXEC_STRATEGY_SINGLE === $strategy) $this->executeSingle();
         if (self::EXEC_STRATEGY_MULTI === $strategy) $this->executeMulti();
 
@@ -110,7 +110,7 @@ class Master {
         $connection = $this->getQueue()->fetchSources();
         $connection = array_shift($connection);
         $connection = array_shift($connection);
-        
+
         // get the channel from the connection
         $channel = $connection->getChannel($this->channel);
         $channel->basic_qos(null, 1, null);

@@ -50,7 +50,7 @@ class Builder {
      * @return \Maleficarum\Worker\Basic\Builder
      */
     private function registerProcess(array $opts = []): \Maleficarum\Worker\Basic\Builder {
-        \Maleficarum\Ioc\Container::register('Maleficarum\Worker\Process\Master', function ($dep) {
+        \Maleficarum\Ioc\Container::registerBuilder('Maleficarum\Worker\Process\Master', function ($dep) {
             return (new \Maleficarum\Worker\Process\Master())
                 ->setQueue($dep['Maleficarum\CommandRouter'])
                 ->setLogger($dep['Maleficarum\Logger']);
@@ -67,7 +67,7 @@ class Builder {
      * @return \Maleficarum\Worker\Basic\Builder
      */
     private function registerHandler(array $opts = []): \Maleficarum\Worker\Basic\Builder {
-        \Maleficarum\Ioc\Container::register('Handler', function ($dep, $opts) {
+        \Maleficarum\Ioc\Container::registerBuilder('Handler', function ($dep, $opts) {
             /** @var \Maleficarum\Worker\Handler\AbstractHandler $handler */
             $handler = new $opts['__class']();
             if (!$handler instanceof \Maleficarum\Worker\Handler\AbstractHandler) throw new \RuntimeException('Handler builder function used to create a non handler class. \Maleficarum\Ioc\Container::get()');
@@ -80,7 +80,7 @@ class Builder {
             return $handler;
         });
 
-        \Maleficarum\Ioc\Container::register('Maleficarum\Worker\Handler\Encapsulator', function ($dep, $opts) {
+        \Maleficarum\Ioc\Container::registerBuilder('Maleficarum\Worker\Handler\Encapsulator', function ($dep, $opts) {
             $enc = new $opts['__class']($opts[0]);
             if (!$enc instanceof \Maleficarum\Worker\Handler\Encapsulator\AbstractEncapsulator) throw new \RuntimeException('Encapsulator builder function used to create a non encapsulator class. \Maleficarum\Ioc\Container::get()');
 
@@ -101,7 +101,7 @@ class Builder {
      * @return \Maleficarum\Worker\Basic\Builder
      */
     private function registerLogger(array $opts = []): \Maleficarum\Worker\Basic\Builder {
-        \Maleficarum\Ioc\Container::register('Maleficarum\Worker\Logger\Logger', function ($dep) {
+        \Maleficarum\Ioc\Container::registerBuilder('Maleficarum\Worker\Logger\Logger', function ($dep) {
             if (!isset($dep['Maleficarum\Config']['logger']['facilities'])) {
                 throw new \RuntimeException('Cannot access the logger object - missing logger configuration. \Maleficarum\Ioc\Container::get()');
             }
@@ -118,7 +118,7 @@ class Builder {
         });
 
         $logger = \Maleficarum\Ioc\Container::get('Maleficarum\Worker\Logger\Logger');
-        \Maleficarum\Ioc\Container::registerDependency('Maleficarum\Logger', $logger);
+        \Maleficarum\Ioc\Container::registerShare('Maleficarum\Logger', $logger);
 
         return $this;
     }

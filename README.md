@@ -1,6 +1,13 @@
 # Change Log
 This is the Maleficarum Worker component implementation. 
 
+## [9.0.0] - 2018-10-05    
+### Changed    
+- Upgraded IoC component to version 3.x   
+- Upgraded phpunit version   
+- Removed repositories section from composer file
+- Fixed unit tests   
+
 ## [8.0.0] - 2018-06-18
 ### Changed
 - Introduced the adaptive multi source consumer mode:
