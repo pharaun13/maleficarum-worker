@@ -32,7 +32,7 @@ class Initializer {
      */
     static public function setUpDebugLevel(array $opts = []): string {
         try {
-            $environment = \Maleficarum\Ioc\Container::getDependency('Maleficarum\Environment');
+            $environment = \Maleficarum\Ioc\Container::retrieveShare('Maleficarum\Environment');
             $environment = $environment->getCurrentEnvironment();
         } catch (\Exception $e) {
             throw new \RuntimeException(sprintf('Environment object not initialized. \%s', __METHOD__));
