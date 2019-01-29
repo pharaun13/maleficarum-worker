@@ -13,12 +13,12 @@ trait DebugTrait {
      */
     public function debug(string $message): self {
         $registry = $this->getRegistry();
-        $timeDifference = \microtime(true) - $registry['debugInfo']['startTime'];
-        $memoryDifference = ((\memory_get_usage() - $registry['debugInfo']['startMemory']) / 1024 / 1024);
+        $timeDifference = \round(\microtime(true) - $registry['debugInfo']['startTime'],6);
+        $memoryDifference = \round(((\memory_get_usage() - $registry['debugInfo']['startMemory']) / 1024 / 1024),6);
         $registry['debugMessages'][] = [
             'message' => $message,
-            'time' => $timeDifference . 'sek|'. \round($timeDifference / $registry['debugInfo']['startTime'], 2) . '%',
-            'memory' => $memoryDifference . ' MB|' . \round($memoryDifference/ $registry['debugInfo']['startMemory'],2) . '%'
+            'time' => $timeDifference . ' sek',
+            'memory' => $memoryDifference . ' MB'
         ];
         $this->setRegistry($registry);
 
