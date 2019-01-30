@@ -12,18 +12,19 @@ trait DebugTrait {
      * Add debug message
      *
      * @param string $message
+     * @param array $options
      *
      * @return $this
      */
-    public function debug(string $message): self {
+    public function debug(string $message, array $options = []): self {
         $registry = $this->getRegistry();
         $timeDifference = \round(\microtime(true) - $registry['debugInfo']['startTime'],6);
         $memoryDifference = \round(((\memory_get_usage() - $registry['debugInfo']['startMemory']) / 1024 / 1024),6);
-        $registry['debugMessages'][] = [
+        $registry['debugMessages'][] = \array_merge($options, [
             'message' => $message,
             'time' => $timeDifference . ' sek',
             'memory' => $memoryDifference . ' MB'
-        ];
+        ]);
         $this->setRegistry($registry);
 
         return $this;
