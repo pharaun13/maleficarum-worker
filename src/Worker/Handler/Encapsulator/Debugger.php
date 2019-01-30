@@ -1,12 +1,27 @@
 <?php
 /**
- * This encapsulator will check the handler result and if it was marked as false will attempt to add the handler command to a deadletter queue.
+ * This encapsulator will print to log debug information stored in registry
  */
 declare (strict_types=1);
 
 namespace Maleficarum\Worker\Handler\Encapsulator;
 
+/**
+ * Class Debugger
+ *
+ * @package Maleficarum\Worker\Handler\Encapsulator
+ */
 class Debugger extends \Maleficarum\Worker\Handler\Encapsulator\AbstractEncapsulator {
+    /**
+     * Default time in seconds when debug information will be printed to log
+     */
+    CONST DEFAULT_TIME_AFTER_PRINT_TO_LOG = 600; //10 min
+
+    /**
+     * Default memory usage in MB when debug information will be printed to log
+     */
+    CONST DEFAULT_MEMORY_USAGE_AFTER_PRINT_TO_LOG = 80; //80MB
+
     /**
      * @see \Maleficarum\Worker\Handler\Encapsulator\Encapsulator::beforeHandle()
      */
@@ -14,7 +29,8 @@ class Debugger extends \Maleficarum\Worker\Handler\Encapsulator\AbstractEncapsul
         $registry = $this->getHandler()->getRegistry();
         $registry['debugMessages'] = [];
         $registry['debugInfo'] = [
-            'printToLog' => true,
+            'timeAfterPrintToLog'=> self::DEFAULT_TIME_AFTER_PRINT_TO_LOG,
+            'memoryUsageAfterPrintToLog'=> self::DEFAULT_TIME_AFTER_PRINT_TO_LOG,
             'startTime' => \microtime(true),
             'startMemory' => \memory_get_usage()
         ];
@@ -28,15 +44,34 @@ class Debugger extends \Maleficarum\Worker\Handler\Encapsulator\AbstractEncapsul
      */
     public function afterHandle(bool $result): bool {
         $registry = $this->getHandler()->getRegistry();
-        if ($registry['debugInfo']['printToLog'] === true && \count($registry['debugMessages']) > 0) {
-            $i=1;
-            foreach($registry['debugMessages'] as $messageData) {
-                $this->log('[DEBUG] ' . $i . '. ' . \json_encode($messageData));
-                $i++;
-            }
+        if(\count($registry['debugMessages']) === 0){
+            return true;
+        }
+
+        $endTime = \microtime(true);
+        $endMemory = \memory_get_usage();
+
+        if (
+            $endTime - $registry['debugInfo']['startTime'] >= $registry['debugInfo']['timeAfterPrintToLog']  ||
+            $endMemory - $registry['debugInfo']['startMemory'] >= $registry['debugInfo']['memoryUsageAfterPrintToLog']
+        ) {
+            $this->printToLog($registry['debugMessages']);
         }
 
         return true;
+    }
+
+    /**
+     * Print all messages to log
+     *
+     * @param array $messages
+     */
+    private function printToLog(array $messages): void {
+        $i=1;
+        foreach($messages as $messageData) {
+            $this->log('[DEBUG] ' . $i . '. ' . \json_encode($messageData));
+            $i++;
+        }
     }
 
     /* ------------------------------------ Interface methods END -------------------------------------- */

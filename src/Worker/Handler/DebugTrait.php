@@ -9,7 +9,11 @@ namespace Maleficarum\Worker\Handler;
  */
 trait DebugTrait {
     /**
+     * Add debug message
+     *
      * @param string $message
+     *
+     * @return $this
      */
     public function debug(string $message): self {
         $registry = $this->getRegistry();
@@ -20,6 +24,36 @@ trait DebugTrait {
             'time' => $timeDifference . ' sek',
             'memory' => $memoryDifference . ' MB'
         ];
+        $this->setRegistry($registry);
+
+        return $this;
+    }
+
+    /**
+     * Set time in seconds when debug information will be printed to log
+     *
+     * @param int $timeInSec
+     *
+     * @return $this
+     */
+    public function setTimeAfterPrintToLog(int $timeInSec): self {
+        $registry = $this->getRegistry();
+        $registry['debugInfo']['timeAfterPrintToLog'] = $timeInSec;
+        $this->setRegistry($registry);
+
+        return $this;
+    }
+
+    /**
+     * Set memory usage in MB when debug information will be printed to log
+     *
+     * @param int $memoryUsageInMB
+     *
+     * @return $this
+     */
+    public function setMemoryUsageAfterPrintToLog(int $memoryUsageInMB): self {
+        $registry = $this->getRegistry();
+        $registry['debugInfo']['memoryUsageAfterPrintToLog'] = $memoryUsageInMB;
         $this->setRegistry($registry);
 
         return $this;
