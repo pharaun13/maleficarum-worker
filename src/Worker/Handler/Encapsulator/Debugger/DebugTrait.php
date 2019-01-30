@@ -1,10 +1,11 @@
 <?php
 declare (strict_types=1);
 
-namespace Maleficarum\Worker\Handler;
+namespace Maleficarum\Worker\Handler\Encapsulator\Debugger;
 
 /**
- * Class DebugTrait
+ * Trait DebugTrait
+ *
  * @package Maleficarum\Worker\Handler
  */
 trait DebugTrait {
@@ -14,7 +15,7 @@ trait DebugTrait {
      * @param string $message
      * @param array $options
      *
-     * @return $this
+     * @return \Maleficarum\Worker\Handler\Encapsulator\Debugger\DebugTrait
      */
     public function debug(string $message, array $options = []): self {
         $registry = $this->getRegistry();
@@ -22,7 +23,7 @@ trait DebugTrait {
         $memoryDifference = \round(((\memory_get_usage() - $registry['debugInfo']['startMemory']) / 1024 / 1024),6);
         $registry['debugMessages'][] = \array_merge($options, [
             'message' => $message,
-            'time' => $timeDifference . ' sek',
+            'time' => $timeDifference . ' sec.',
             'memory' => $memoryDifference . ' MB'
         ]);
         $this->setRegistry($registry);
@@ -35,9 +36,13 @@ trait DebugTrait {
      *
      * @param int $timeInSec
      *
-     * @return $this
+     * @return \Maleficarum\Worker\Handler\Encapsulator\Debugger\DebugTrait
      */
     public function setTimeAfterPrintToLog(int $timeInSec): self {
+        if ($timeInSec < 0) {
+            throw \InvalidArgumentException('The time parameter must be greater or equal 0');
+        }
+
         $registry = $this->getRegistry();
         $registry['debugInfo']['timeAfterPrintToLog'] = $timeInSec;
         $this->setRegistry($registry);
@@ -50,9 +55,13 @@ trait DebugTrait {
      *
      * @param int $memoryUsageInMB
      *
-     * @return $this
+     * @return \Maleficarum\Worker\Handler\Encapsulator\Debugger\DebugTrait
      */
     public function setMemoryUsageAfterPrintToLog(int $memoryUsageInMB): self {
+        if ($memoryUsageInMB < 0) {
+            throw \InvalidArgumentException('The memory parameter must be greater or equal 0');
+        }
+
         $registry = $this->getRegistry();
         $registry['debugInfo']['memoryUsageAfterPrintToLog'] = $memoryUsageInMB;
         $this->setRegistry($registry);

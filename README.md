@@ -6,9 +6,12 @@ This is the Maleficarum Worker component implementation.
 - Add Debugger encapsulator 
 - Add debug trait for Worker Handler. 
 
-When Handler has `\Maleficarum\Worker\Handler\Encapsulator\Debugger` and use `\Maleficarum\Worker\Handler` 
-you can use method `$this->debug(string $message, array $options)` inside the Handler code. In outcome there is an additional debug entry in logs like `[DEBUG] 1. {"message":"This is a test message","time":"2,408634 sek","memory":"0,000584 MB"}`. 
+When Handler has `\Maleficarum\Worker\Handler\Encapsulator\Debugger` and use `\Maleficarum\Worker\Handler\Encapsulator\Debugger\DebugTrait` 
+you can use method `$this->debug(string $message, array $options)` inside the Handler code. In outcome there is an additional debug entry in logs like `[DEBUG] 1. {"message":"This is a test message","time":"2,408634 sec.","memory":"0,000584 MB"}`. 
 Each of the message has automatically added an information about the execution time and the memory usage.
+
+[EXAMPLE](examples/encapsulators/debbuger.md)
+
 
 ## [9.0.0] - 2018-10-05    
 ### Changed    
