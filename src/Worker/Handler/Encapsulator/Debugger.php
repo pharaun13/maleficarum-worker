@@ -44,7 +44,7 @@ class Debugger extends \Maleficarum\Worker\Handler\Encapsulator\AbstractEncapsul
      */
     public function afterHandle(bool $result): bool {
         $registry = $this->getHandler()->getRegistry();
-        $registry['debugMessages'] ?? [];
+        isset($registry['debugMessages']) or $registry['debugMessages'] = [];
         if(\count($registry['debugMessages']) === 0){
             return true;
         }
