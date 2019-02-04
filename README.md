@@ -1,6 +1,10 @@
 # Change Log
 This is the Maleficarum Worker component implementation. 
 
+## [9.1.1] - 2019-02-04
+### Fixed
+- Incorrect memory format in debugger encapsulator
+
 ## [9.1.0] - 2019-01-29
 ### Added
 - Add Debugger encapsulator 

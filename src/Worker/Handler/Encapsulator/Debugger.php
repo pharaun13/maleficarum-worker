@@ -32,7 +32,7 @@ class Debugger extends \Maleficarum\Worker\Handler\Encapsulator\AbstractEncapsul
             'timeAfterPrintToLog'=> self::DEFAULT_TIME_AFTER_PRINT_TO_LOG,
             'memoryUsageAfterPrintToLog'=> self::DEFAULT_MEMORY_USAGE_AFTER_PRINT_TO_LOG,
             'startTime' => \microtime(true),
-            'startMemory' => \memory_get_usage() / 1024 /1024
+            'startMemory' => \memory_get_usage() / 1024 / 1024
         ];
         $this->getHandler()->setRegistry($registry);
 
