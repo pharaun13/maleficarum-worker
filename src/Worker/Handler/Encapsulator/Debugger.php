@@ -30,9 +30,9 @@ class Debugger extends \Maleficarum\Worker\Handler\Encapsulator\AbstractEncapsul
         $registry['debugMessages'] = [];
         $registry['debugInfo'] = [
             'timeAfterPrintToLog'=> self::DEFAULT_TIME_AFTER_PRINT_TO_LOG,
-            'memoryUsageAfterPrintToLog'=> self::DEFAULT_TIME_AFTER_PRINT_TO_LOG,
+            'memoryUsageAfterPrintToLog'=> self::DEFAULT_MEMORY_USAGE_AFTER_PRINT_TO_LOG,
             'startTime' => \microtime(true),
-            'startMemory' => \memory_get_usage()
+            'startMemory' => \memory_get_usage() / 1024 /1024
         ];
         $this->getHandler()->setRegistry($registry);
 
@@ -50,7 +50,7 @@ class Debugger extends \Maleficarum\Worker\Handler\Encapsulator\AbstractEncapsul
         }
 
         $endTime = \microtime(true);
-        $endMemory = \memory_get_usage();
+        $endMemory = \memory_get_usage() / 1024 / 1024;
 
         if (
             $endTime - $registry['debugInfo']['startTime'] >= $registry['debugInfo']['timeAfterPrintToLog']  ||
