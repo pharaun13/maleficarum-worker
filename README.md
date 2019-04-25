@@ -1,6 +1,10 @@
 # Change Log
 This is the Maleficarum Worker component implementation. 
 
+## [9.1.2] - 2019-04-25
+### Fixed
+- Add sandbox environment
+
 ## [9.1.1] - 2019-02-04
 ### Fixed
 - Incorrect memory format in debugger encapsulator
