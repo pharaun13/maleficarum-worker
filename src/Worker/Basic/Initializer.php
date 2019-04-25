@@ -39,7 +39,7 @@ class Initializer {
         }
 
         // set handler debug level and error display value based on env
-        if (in_array($environment, ['local', 'development', 'staging'])) {
+        if (in_array($environment, ['local', 'development', 'staging', 'sandbox'])) {
             \Maleficarum\Handler\AbstractHandler::setDebugLevel(\Maleficarum\Handler\AbstractHandler::DEBUG_LEVEL_FULL);
         } elseif ('uat' === $environment) {
             \Maleficarum\Handler\AbstractHandler::setDebugLevel(\Maleficarum\Handler\AbstractHandler::DEBUG_LEVEL_LIMITED);
