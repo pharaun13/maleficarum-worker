@@ -1,6 +1,10 @@
 # Change Log
 This is the Maleficarum Worker component implementation. 
 
+## [9.2.0] - 2019-09-02
+### Added
+- added support for testMode command parameter
+
 ## [9.1.2] - 2019-04-25
 ### Fixed
 - Add sandbox environment
