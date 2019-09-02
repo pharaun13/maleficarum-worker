@@ -24,7 +24,7 @@ class Information extends \Maleficarum\Worker\Handler\Encapsulator\AbstractEncap
      * @see \Maleficarum\Worker\Handler\Encapsulator\Encapsulator::beforeHandle()
      */
     public function beforeHandle() : bool {
-        $this->log('Received command. Type: ' . $this->getHandler()->getCommand()->getType() . ' || Meta: ' . json_encode($this->getHandler()->getCommand()->getCommandMetaData()) . ' || Data: ' . $this->getHandler()->getCommand());
+        $this->log('Received command. Type: ' . $this->getHandler()->getCommand()->getType() . ' || Meta: ' . json_encode($this->getHandler()->getCommand()->getCommandMetaData()) . ' || Data: ' . $this->getHandler()->getCommand() . ' || Test Mode: ' . json_encode($this->getHandler()->getCommand()->getTestMode()));
         $this->getProfiler('time')->begin();
 
         return true;
