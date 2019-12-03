@@ -49,11 +49,8 @@ class Initializer {
             case 'sandbox':
                 \Maleficarum\Handler\AbstractHandler::setDebugLevel(\Maleficarum\Handler\AbstractHandler::DEBUG_LEVEL_LIMITED);
                 break;
-            case 'production':
-                \Maleficarum\Handler\AbstractHandler::setDebugLevel(\Maleficarum\Handler\AbstractHandler::DEBUG_LEVEL_CRUCIAL);
-                break;
             default:
-                throw new \RuntimeException(sprintf('Unrecognised environment. \%s', __METHOD__));
+                \Maleficarum\Handler\AbstractHandler::setDebugLevel(\Maleficarum\Handler\AbstractHandler::DEBUG_LEVEL_CRUCIAL);
         }
 
         // since this is a worker app we can turn on all error reporting regardless of environment
