@@ -38,8 +38,10 @@ class Initializer {
             throw new \RuntimeException(sprintf('Environment object not initialized. \%s', __METHOD__));
         }
 
+        \preg_match('/^production|development|sandbox|staging|uat/', $environment, $matches);
+
         // set handler debug level and error display value based on env
-        switch ($environment) {
+        switch (\reset($matches)) {
             case 'local':
             case 'development':
             case 'staging':
@@ -49,8 +51,11 @@ class Initializer {
             case 'sandbox':
                 \Maleficarum\Handler\AbstractHandler::setDebugLevel(\Maleficarum\Handler\AbstractHandler::DEBUG_LEVEL_LIMITED);
                 break;
-            default:
+            case 'production':
                 \Maleficarum\Handler\AbstractHandler::setDebugLevel(\Maleficarum\Handler\AbstractHandler::DEBUG_LEVEL_CRUCIAL);
+                break;
+            default:
+                throw new \RuntimeException(sprintf('Unrecognised environment. \%s', __METHOD__));
         }
 
         // since this is a worker app we can turn on all error reporting regardless of environment
