@@ -228,7 +228,7 @@ class Master {
      */
     public function handleCommand(\PhpAmqpLib\Message\AMQPMessage $message) {
         try {
-            $command = \Maleficarum\Command\AbstractCommand::decode($message->body);
+            $command = \Maleficarum\Command\AbstractCommand::decode($message->body, $message->get('application_headers')->getNativeData());
         } catch (\Throwable $t) {
             $this->getLogger()->log('[' . $this->name . '] Received command of unknown structure (NOT JSON). [content: '.$message->body.']', 'PHP Worker Error');
             $message->delivery_info['channel']->basic_nack($message->delivery_info['delivery_tag']);

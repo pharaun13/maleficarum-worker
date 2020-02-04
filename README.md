@@ -1,6 +1,10 @@
 # Change Log
 This is the Maleficarum Worker component implementation. 
 
+## [9.3.0] - 2020-02-04
+### Added
+- added amqp headers to command
+
 ## [9.2.0] - 2019-09-02
 ### Added
 - added support for testMode command parameter
