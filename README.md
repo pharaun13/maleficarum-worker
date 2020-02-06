@@ -1,6 +1,10 @@
 # Change Log
 This is the Maleficarum Worker component implementation. 
 
+## [9.3.1] - 2020-02-06
+### Fixed
+- return empty array when `application_headers` key doesn't exist
+
 ## [9.3.0] - 2020-02-04
 ### Added
 - added amqp headers to command
