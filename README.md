@@ -1,6 +1,11 @@
 # Change Log
 This is the Maleficarum Worker component implementation. 
 
+
+## [10.0.0] - 2020-02-18
+### Fixed
+- bump maleficarum/rabbitmq version to 10.0.0
+
 ## [9.3.1] - 2020-02-06
 ### Fixed
 - return empty array when `application_headers` key doesn't exist
