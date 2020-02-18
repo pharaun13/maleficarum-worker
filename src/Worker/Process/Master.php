@@ -110,6 +110,8 @@ class Master {
         $connection = $this->getQueue()->fetchSources();
         $connection = array_shift($connection);
         $connection = array_shift($connection);
+        $socket = $connection->getConnection()->getSocket();
+        $this->enableKeepAlive($socket);
 
         // get the channel from the connection
         $channel = $connection->getChannel($this->channel);
@@ -147,7 +149,9 @@ class Master {
         // get channels and sockets for each source connection
         foreach ($connections as $priority_key => $priority) {
             foreach ($priority as $source) {
-                $sockets[] = $source->getConnection()->getSocket();
+                $connectionSocket = $source->getConnection()->getSocket();
+                $this->enableKeepAlive($connectionSocket);
+                $sockets[] = $connectionSocket;
                 $chan = $source->getChannel($this->channel);
                 
                 array_key_exists($priority_key, $channels) or $channels[$priority_key] = [];
@@ -267,6 +271,10 @@ class Master {
     public function conclude(): \Maleficarum\Worker\Process\Master {
         return $this;
     }
-    
+
+    private function enableKeepAlive($resource) {
+        $socket = \socket_import_stream($resource);
+        \socket_set_option($socket, \SOL_SOCKET, \SO_KEEPALIVE, 1);
+    }
     /* ------------------------------------ Class Methods END ------------------------------------------ */
 }

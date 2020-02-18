@@ -5,6 +5,7 @@
     $rabbitConnectionMock = $this->createMock('Maleficarum\Rabbitmq\Connection\Connection');
     $rabbitManagerMock = $this->createMock('Maleficarum\Rabbitmq\Manager\Manager');
     $channelMock = $this->createMock('PhpAmqpLib\Channel\AMQPChannel');
+    $connectionMock = $this->createMock('PhpAmqpLib\Connection\AMQPStreamConnection');
 
     // testMainLoop
     if ($this->getContext() === 'testMainLoop') {
@@ -22,6 +23,16 @@
             ->expects($this->once())
             ->method('basic_consume')
             ->with($this->equalTo('test-queue'));
+
+        $connectionMock
+            ->expects($this->once())
+            ->method('getSocket')
+            ->will($this->returnValue(\stream_socket_server('tcp://127.0.0.1:8000')));
+
+        $rabbitConnectionMock
+            ->expects($this->once())
+            ->method('getConnection')
+            ->will($this->returnValue($connectionMock));
 
         $rabbitManagerMock
             ->expects($this->exactly(2))
