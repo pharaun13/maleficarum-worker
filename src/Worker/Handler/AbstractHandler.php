@@ -52,15 +52,15 @@ abstract class AbstractHandler {
 
     /**
      * Internal storage for the registry array used to pass data between the handler and its encapsulators.
-     * 
-     * @var array 
+     *
+     * @var array
      */
     private $registry = [];
-    
+
     /**
-     * Internal storage for the list 
-     * 
-     * @var array 
+     * Internal storage for the list
+     *
+     * @var array
      */
     private $encapsulators = [
         'Maleficarum\Worker\Handler\Encapsulator\Information'
@@ -87,14 +87,14 @@ abstract class AbstractHandler {
     public function log(string $message): \Maleficarum\Worker\Handler\AbstractHandler {
         $this
             ->getLogger()
-            ->log('[' . $this->getWorkerId() . '] ' . '[' . $this->getHandlerId() . '] ' . $message, 'PHP Worker Info');
+            ->log('['.$this->getWorkerId().'] '.'['.$this->getHandlerId().'] '.'['.$this->getMemoryUsage().'] '.$message, 'PHP Worker Info');
 
         return $this;
     }
-    
+
     /**
      * Process the handler. This executes any pre encapsulator logic, proceeds to the handle logic and follows with the encapsulator post logic.
-     * 
+     *
      * @return bool
      */
     public function process() : bool {
@@ -105,15 +105,15 @@ abstract class AbstractHandler {
             if (!$enc instanceof \Maleficarum\Worker\Handler\Encapsulator\AbstractEncapsulator) throw new \RuntimeException(sprintf('Classes specified as handler encapsulators MUST implement the \Maleficarum\Worker\Handler\Encapsulator\Encapsulator interface. %s', __METHOD__));
             $encs[] = $enc;
         }
-        
+
         // pre handle encapsulation
         foreach ($encs as $enc) $enc->beforeHandle();
-        
+
         $result = $this->handle();
-        
+
         // post handle encapsulation
         foreach (array_reverse($encs) as $enc) $enc->afterHandle($result);
-        
+
         return $result;
     }
 
@@ -130,7 +130,7 @@ abstract class AbstractHandler {
             ->addCommand($cmd->setParentHandlerId($this->getHandlerId()), $connection);
         return $this;
     }
-    
+
     /**
      * Add collection of commands to the queue
      *
@@ -147,9 +147,9 @@ abstract class AbstractHandler {
             ->addCommands($commands, $connection);
         return $this;
     }
-    
+
     /* ------------------------------------ Class Methods END ------------------------------------------ */
-    
+
     /* ------------------------------------ Setters & Getters START ------------------------------------ */
     /**
      * Set current command handler id string.
@@ -228,19 +228,19 @@ abstract class AbstractHandler {
     public function getCommand(): ?\Maleficarum\Command\AbstractCommand {
         return $this->command;
     }
-    
+
     /**
      * Fetch current registry object.
-     * 
+     *
      * @return array
      */
     public function getRegistry() : array {
         return $this->registry;
     }
-    
+
     /**
      * Set a new registry object.
-     * 
+     *
      * @param array $registry
      * @return \Maleficarum\Worker\Handler\AbstractHandler
      */
@@ -251,7 +251,7 @@ abstract class AbstractHandler {
 
     /**
      * Fetch all encapsulators.
-     * 
+     *
      * @return array
      */
     protected function getEncapsulators() : array {
@@ -260,13 +260,21 @@ abstract class AbstractHandler {
 
     /**
      * Set new encapsulators.
-     * 
+     *
      * @param array $encapsulators
      */
     private function setEncapsulators(array $encapsulators) : \Maleficarum\Worker\Handler\AbstractHandler {
         $this->encapsulators = $encapsulators;
         return $this;
     }
-    
+
     /* ------------------------------------ Setters & Getters END -------------------------------------- */
+
+    /**
+     * @return string
+     */
+    private function getMemoryUsage() {
+
+        return \sprintf('memory usage: %s MB', \round(\memory_get_usage() / 1024 / 1024, 2));
+    }
 }
