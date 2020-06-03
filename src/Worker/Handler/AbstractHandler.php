@@ -122,12 +122,13 @@ abstract class AbstractHandler {
      *
      * @param \Maleficarum\Command\AbstractCommand $cmd
      * @param string $connection
+     * @param array $commandHeaders
      * @return \Maleficarum\Worker\Handler\AbstractHandler
      */
-    public function addCommand(\Maleficarum\Command\AbstractCommand $cmd, string $connection) : \Maleficarum\Worker\Handler\AbstractHandler {
+    public function addCommand(\Maleficarum\Command\AbstractCommand $cmd, string $connection, array $commandHeaders = []) : \Maleficarum\Worker\Handler\AbstractHandler {
         $this
             ->getQueue()
-            ->addCommand($cmd->setParentHandlerId($this->getHandlerId()), $connection);
+            ->addCommand($cmd->setParentHandlerId($this->getHandlerId()), $connection, $commandHeaders);
         return $this;
     }
 
@@ -136,15 +137,16 @@ abstract class AbstractHandler {
      *
      * @param array|\Maleficarum\Command\AbstractCommand[] $commands
      * @param string $connection
+     * @param array $commandsHeaders
      * @return \Maleficarum\Worker\Handler\AbstractHandler
      */
-    public function addCommands(array $commands, string $connection) : \Maleficarum\Worker\Handler\AbstractHandler {
+    public function addCommands(array $commands, string $connection, array $commandsHeaders = []) : \Maleficarum\Worker\Handler\AbstractHandler {
         foreach ($commands as $command) {
             $command->setParentHandlerId($this->getHandlerId());
         }
         $this
             ->getQueue()
-            ->addCommands($commands, $connection);
+            ->addCommands($commands, $connection, $commandsHeaders);
         return $this;
     }
 

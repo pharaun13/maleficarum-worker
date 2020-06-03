@@ -23,24 +23,32 @@ class Deadletter extends \Maleficarum\Worker\Handler\Encapsulator\AbstractEncaps
         // only try to add the command to a deadletter queue if the main handler failed
         if (false === $result) {
             $registry = $this->getHandler()->getRegistry();
-            
+
             // add to deadletter - only if the registry does not explicitly stats that it should be skipped.
             if (!isset($registry['deadletter']['skip'])) {
                 try {
-                    $this->getHandler()->addCommand(clone $this->getHandler()->getCommand(), 'deadletter');
+                    $command = clone $this->getHandler()->getCommand();
+                    $commandHeaders['timestamp'] = date('Y-m-d H:i:sP');
+                    $commandHeaders['handlerId'] = $this->getHandler()->getHandlerId();
+
+                    if ($command->hasErrors()) {
+                        $commandHeaders['errorMessage'] = \implode('. ', $command->getErrors());
+                    }
+
+                    $this->getHandler()->addCommand($command, 'deadletter', $commandHeaders);
                     $this->log('Deadletter encapsulator activated - message was added to the deadletter queue.');
                 } catch (\InvalidArgumentException $e) {
                     $this->log('Deadletter encapsulator activated but the deadletter connection was not configured - message was NOT added to the deadletter queue.');
                 } catch (\PhpAmqpLib\Exception\AMQPProtocolConnectionException $e) {
                     $this->log('Deadletter encapsulator activated but the deadletter connection was not properly configured - message was NOT added to the deadletter queue.');
                 } catch (\RuntimeException $e) {
-                    $this->log('Deadletter encapsulator activated but the command validation failed - message was NOT added to the deadletter queue.');
+                    $this->log('Deadletter encapsulator activated but the command validation failed - message was NOT added to the deadletter queue. Error: ' . $e->getMessage());
                 }
             } else {
                 $this->log('Deadletter encapsulator overridden - message was NOT added to the deadletter queue.');
             }
         }
-        
+
         return true;
     }
 

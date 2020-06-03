@@ -1,6 +1,28 @@
 # Change Log
 This is the Maleficarum Worker component implementation. 
 
+## [10.1.0] - 2020-06-03
+### Added
+- updated the deadletter encapsulator in order to provide error message, timestamp and handler id in the deadletters' headers. 
+<br/><br/>The timestamp and handler id are added to the headers by default. To preserve the error message, a new function 
+`$command->addError(string $error)` has to be called on the command object in the worker's code, 
+in the most common scenario in the command's handler main try-catch block: <br/>
+<pre>public function handle(): bool {
+    $command = $this->getCommand();
+    ...
+    
+    try {
+     // handle command
+     } catch (\Throwable $e) {
+        $this->logException($e);
+        $command->addError($e->getMessage());
+        return false;
+     }
+     
+     return true;
+}
+</pre> 
+
 ## [10.0.1] - 2020-02-18
 ### Added
 - added information about memory usage
