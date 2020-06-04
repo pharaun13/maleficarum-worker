@@ -1,7 +1,7 @@
 # Change Log
 This is the Maleficarum Worker component implementation. 
 
-## [10.1.0] - 2020-06-03
+## [11.0.0] - 2020-06-04
 ### Added
 - updated the deadletter encapsulator in order to provide error message, timestamp and handler id in the deadletters' headers. 
 <br/><br/>The timestamp and handler id are added to the headers by default. To preserve the error message, a new function 
