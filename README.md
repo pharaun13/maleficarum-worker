@@ -1,5 +1,9 @@
 # Change Log
-This is the Maleficarum Worker component implementation. 
+This is the Maleficarum Worker component implementation.
+
+## [12.0.0] - 2020-06-05
+### Changed
+- Bump command component to version 4.x
 
 ## [11.0.0] - 2020-06-04
 ### Added
