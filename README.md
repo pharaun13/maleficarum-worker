@@ -1,6 +1,11 @@
 # Change Log
 This is the Maleficarum Worker component implementation. 
 
+
+## [10.0.2] - 2020-06-15
+### Fix
+- Use maleficarum-command 3.2.0
+
 ## [10.0.1] - 2020-02-18
 ### Added
 - added information about memory usage
