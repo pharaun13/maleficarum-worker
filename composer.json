@@ -11,7 +11,7 @@
         "maleficarum/profiler": "^5.0",
         "maleficarum/handler": "^4.0",
         "maleficarum/rabbitmq": "^10.0",
-        "maleficarum/command": "^3.2"
+        "maleficarum/command": "3.2.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^7.3"
