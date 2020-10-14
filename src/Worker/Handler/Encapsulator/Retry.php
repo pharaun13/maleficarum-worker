@@ -61,7 +61,10 @@ class Retry extends \Maleficarum\Worker\Handler\Encapsulator\AbstractEncapsulato
             // update the command meta data            
             $meta['retry']['attempts'] = $attempCount + 1;
             $command->setCommandMetaData($meta);
-            
+
+            // delay
+            \sleep($attempCount);
+
             // requeue the command
             try {
                 $this->getHandler()->addCommand($command, $registry['retry']['connection']);
