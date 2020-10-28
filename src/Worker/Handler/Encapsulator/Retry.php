@@ -61,8 +61,8 @@ class Retry extends \Maleficarum\Worker\Handler\Encapsulator\AbstractEncapsulato
                 return true;
             }
 
-            $delayMilliseconds = $meta['retry']['delay'] ?? self::DEFAULT_DELAY;
-            $multiplier = $meta['retry']['multiplier'] ?? self::DEFAULT_MULTIPLIER;
+            $delayMilliseconds = $registry['retry']['delay'] ?? self::DEFAULT_DELAY;
+            $multiplier = $registry['retry']['multiplier'] ?? self::DEFAULT_MULTIPLIER;
             $delay = $delayMilliseconds * ($multiplier ** $attempCount);
 
             // update the command meta data            
