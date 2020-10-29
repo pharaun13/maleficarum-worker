@@ -129,6 +129,7 @@ abstract class AbstractHandler {
         $this
             ->getQueue()
             ->addCommand($cmd->setParentHandlerId($this->getHandlerId()), $connection, $commandHeaders);
+
         return $this;
     }
 
@@ -147,6 +148,7 @@ abstract class AbstractHandler {
         $this
             ->getQueue()
             ->addCommands($commands, $connection, $commandsHeaders);
+
         return $this;
     }
 

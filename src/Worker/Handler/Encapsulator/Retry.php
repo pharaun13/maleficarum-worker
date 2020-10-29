@@ -7,6 +7,9 @@ declare (strict_types=1);
 namespace Maleficarum\Worker\Handler\Encapsulator;
 
 class Retry extends \Maleficarum\Worker\Handler\Encapsulator\AbstractEncapsulator {
+    private const DEFAULT_DELAY = 0;
+    private const DEFAULT_MULTIPLIER = 1;
+
     /* ------------------------------------ Interface methods START ------------------------------------ */
 
     /**
@@ -57,15 +60,24 @@ class Retry extends \Maleficarum\Worker\Handler\Encapsulator\AbstractEncapsulato
                 $this->log('Retry encapsulator activated but attemp count exceeds the registry attemp limit - message was NOT requeued.');
                 return true;
             }
-            
+
+            $delayMilliseconds = $registry['retry']['delay'] ?? self::DEFAULT_DELAY;
+            $multiplier = $registry['retry']['multiplier'] ?? self::DEFAULT_MULTIPLIER;
+            $delay = $delayMilliseconds * ($multiplier ** $attempCount);
+
+            $commandHeaders = [];
+            if ($delay > 0) {
+                $commandHeaders = ['x-delay' => $delay];
+            }
+
             // update the command meta data            
             $meta['retry']['attempts'] = $attempCount + 1;
             $command->setCommandMetaData($meta);
-            
+
             // requeue the command
             try {
-                $this->getHandler()->addCommand($command, $registry['retry']['connection']);
-                $this->log('Retry encapsulator activated - message requeued. Retry: '.($attempCount+1).' of '.$registry['retry']['limit']);
+                $this->getHandler()->addCommand($command, $registry['retry']['connection'], $commandHeaders);
+                $this->log('Retry encapsulator activated - message requeued. Retry: ' . ($attempCount + 1) . ' of ' . $registry['retry']['limit'] . ' [delay: ' . $delay . 'ms]');
             } catch (\InvalidArgumentException $e) {
                 $this->log('Retry encapsulator activated but the retry connection was not configured - message was NOT requeued.');
             } catch (\PhpAmqpLib\Exception\AMQPProtocolConnectionException $e) {
