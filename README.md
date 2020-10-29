@@ -1,6 +1,10 @@
 # Change Log
 This is the Maleficarum Worker component implementation.
 
+## [12.1.0] - 2020-10-29
+### Added
+- Added support for delayed retry
+
 ## [12.0.0] - 2020-06-05
 ### Changed
 - Bump command component to version 4.x
