@@ -65,13 +65,18 @@ class Retry extends \Maleficarum\Worker\Handler\Encapsulator\AbstractEncapsulato
             $multiplier = $registry['retry']['multiplier'] ?? self::DEFAULT_MULTIPLIER;
             $delay = $delayMilliseconds * ($multiplier ** $attempCount);
 
+            $commandHeaders = [];
+            if ($delay > 0) {
+                $commandHeaders = ['x-delay' => $delay];
+            }
+
             // update the command meta data            
             $meta['retry']['attempts'] = $attempCount + 1;
             $command->setCommandMetaData($meta);
 
             // requeue the command
             try {
-                $this->getHandler()->addCommand($command, $registry['retry']['connection'], ['x-delay' => $delay]);
+                $this->getHandler()->addCommand($command, $registry['retry']['connection'], $commandHeaders);
                 $this->log('Retry encapsulator activated - message requeued. Retry: ' . ($attempCount + 1) . ' of ' . $registry['retry']['limit'] . ' [delay: ' . $delay . 'ms]');
             } catch (\InvalidArgumentException $e) {
                 $this->log('Retry encapsulator activated but the retry connection was not configured - message was NOT requeued.');
