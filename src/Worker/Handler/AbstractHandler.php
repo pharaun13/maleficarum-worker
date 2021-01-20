@@ -109,7 +109,13 @@ abstract class AbstractHandler {
         // pre handle encapsulation
         foreach ($encs as $enc) $enc->beforeHandle();
 
-        $result = $this->handle();
+        try {
+            $result = $this->handle();
+        } catch (\Throwable $t) {
+            $this->getCommand()->addError($t);
+
+            $result = false;
+        }
 
         // post handle encapsulation
         foreach (array_reverse($encs) as $enc) $enc->afterHandle($result);
