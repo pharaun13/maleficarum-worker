@@ -1,6 +1,10 @@
 # Change Log
 This is the Maleficarum Worker component implementation.
 
+## [13.0.0] - 2021-01-20
+### Added
+- Added support for unhandled exceptions
+
 ## [12.1.0] - 2020-10-29
 ### Added
 - Added support for delayed retry
