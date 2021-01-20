@@ -1,6 +1,10 @@
 # Change Log
 This is the Maleficarum Worker component implementation.
 
+## [13.0.1] - 2021-01-20
+### Fixed
+- Bump rabbitmq component to version 12.0.0
+
 ## [13.0.0] - 2021-01-20
 ### Added
 - Added support for unhandled exceptions
