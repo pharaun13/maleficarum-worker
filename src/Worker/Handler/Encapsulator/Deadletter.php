@@ -9,6 +9,8 @@ namespace Maleficarum\Worker\Handler\Encapsulator;
 class Deadletter extends \Maleficarum\Worker\Handler\Encapsulator\AbstractEncapsulator {
     /* ------------------------------------ Interface methods START ------------------------------------ */
 
+    const DEFAULT_DEADLETTER_ROUTE = 'deadletter';
+
     /**
      * @see \Maleficarum\Worker\Handler\Encapsulator\Encapsulator::beforeHandle()
      */
@@ -30,12 +32,13 @@ class Deadletter extends \Maleficarum\Worker\Handler\Encapsulator\AbstractEncaps
                     $command = clone $this->getHandler()->getCommand();
                     $commandHeaders['timestamp'] = date('Y-m-d H:i:sP');
                     $commandHeaders['handlerId'] = $this->getHandler()->getHandlerId();
+                    $route = $registry['deadletter']['route'] ?? self::DEFAULT_DEADLETTER_ROUTE;
 
                     if ($command->hasErrors()) {
                         $commandHeaders['errorMessage'] = \implode('. ', $command->getErrors());
                     }
 
-                    $this->getHandler()->addCommand($command, 'deadletter', $commandHeaders);
+                    $this->getHandler()->addCommand($command, $route, $commandHeaders);
                     $this->log('Deadletter encapsulator activated - message was added to the deadletter queue.');
                 } catch (\InvalidArgumentException $e) {
                     $this->log('Deadletter encapsulator activated but the deadletter connection was not configured - message was NOT added to the deadletter queue.');
