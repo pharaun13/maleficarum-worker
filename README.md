@@ -1,6 +1,10 @@
 # Change Log
 This is the Maleficarum Worker component implementation.
 
+## [13.1.0] - 2021-01-29
+### Added
+- The deadletter connection can be set by registry
+
 ## [13.0.1] - 2021-01-20
 ### Fixed
 - Bump rabbitmq component to version 12.0.0
