@@ -14,5 +14,5 @@ interface Facility {
      *
      * @return \Maleficarum\Worker\Logger\Facility\Facility
      */
-    public function write($data, string $level): \Maleficarum\Worker\Logger\Facility\Facility;
+    public function write($data, string $level, string $hid): \Maleficarum\Worker\Logger\Facility\Facility;
 }
