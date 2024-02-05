@@ -25,7 +25,7 @@ class Cli implements Facility {
      *
      * @return \Maleficarum\Worker\Logger\Facility\Facility
      */
-    public function write($data, string $level): \Maleficarum\Worker\Logger\Facility\Facility {
+    public function write($data, string $level, string $hid): \Maleficarum\Worker\Logger\Facility\Facility {
         if (!is_string($level)) {
             throw new \InvalidArgumentException(sprintf('Incorrect debug level provided - string expected. \%s::write()'));
         }
