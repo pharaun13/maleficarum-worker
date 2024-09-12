@@ -6,6 +6,11 @@
 namespace Maleficarum\Worker\Logger;
 
 class Logger {
+
+    /**
+     * @var string
+     */
+    private $hid;
     /**
      * Internal storage for assigned facilities.
      *
@@ -38,7 +43,7 @@ class Logger {
         }
 
         foreach ($this->facilities as $facility) {
-            $facility->write($data, $level);
+            $facility->write($data, $level, $this->hid ?? "");
         }
 
         return $this;
@@ -70,4 +75,8 @@ class Logger {
         return $this;
     }
     /* ------------------------------------ Logger methods END ----------------------------------------- */
+
+    public function setHid(string $hid) {
+        $this->hid = $hid;
+    }
 }

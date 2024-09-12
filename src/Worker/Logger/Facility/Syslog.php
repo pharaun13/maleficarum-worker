@@ -25,15 +25,15 @@ class Syslog implements Facility {
      *
      * @return \Maleficarum\Worker\Logger\Facility\Facility
      */
-    public function write($data, string $level): \Maleficarum\Worker\Logger\Facility\Facility {
+    public function write($data, string $level, string $hid): \Maleficarum\Worker\Logger\Facility\Facility {
         if (!is_string($level)) {
             throw new \InvalidArgumentException(sprintf('Incorrect debug level provided - string expected. \%s::write()'));
         }
 
         if (is_object($data) || is_array($data)) {
-            syslog(\LOG_ALERT, (strlen($level) ? '[' . $level . ']:' : '') . ' [date: ' . date('Y-m-d H-i-s') . '] ' . var_export($data, true) . self::FACILITY_EOL);
+            syslog(\LOG_ALERT, (strlen($level) ? '[' . $level . ']:' : '') . ' [date: ' . date('Y-m-d H-i-s') . '] ['.$hid.'] ' . var_export($data, true) . self::FACILITY_EOL);
         } else {
-            syslog(\LOG_ALERT, (strlen($level) ? '[' . $level . ']:' : '') . ' [date: ' . date('Y-m-d H-i-s') . '] ' . $data . self::FACILITY_EOL);
+            syslog(\LOG_ALERT, (strlen($level) ? '[' . $level . ']:' : '') . ' [date: ' . date('Y-m-d H-i-s') . '] ['.$hid.'] ' . $data . self::FACILITY_EOL);
         }
 
         return $this;

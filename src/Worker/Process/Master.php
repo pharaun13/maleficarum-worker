@@ -257,6 +257,8 @@ class Master {
             ->setHandlerId(uniqid('HID-'))
             ->setCommand($command);
 
+        $this->getLogger()->setHid($handler->getHandlerId());
+
         $handler->process();
         $message->delivery_info['channel']->basic_ack($message->delivery_info['delivery_tag']);
 
